@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+    /* Fallback para navegadores antigos */
+    @supports not (text-wrap: balance) {
+      text-align: center;
+    }
+  }
+}

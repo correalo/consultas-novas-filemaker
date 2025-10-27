@@ -1,0 +1,27 @@
+{
+  "name": "consultas-novas-filemaker-importer",
+  "version": "1.0.0",
+  "description": "Importador de planilha Excel para MongoDB",
+  "main": "import-to-mongodb.js",
+  "scripts": {
+    "import": "node import-to-mongodb.js",
+    "start": "node import-to-mongodb.js",
+    "corrigir-telefones": "node corrigir-telefones.js",
+    "corrigir-telefones-auto": "node corrigir-telefones-auto.js",
+    "adicionar-retornos": "node adicionar-campo-retornos.js",
+    "adicionar-periodos": "node adicionar-periodos-retornos.js",
+    "adicionar-recall": "node adicionar-recall.js"
+  },
+  "keywords": [
+    "mongodb",
+    "excel",
+    "import",
+    "xlsx"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.3.0",
+    "xlsx": "^0.18.5"
+  }
+}
