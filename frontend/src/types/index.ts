@@ -25,6 +25,9 @@ export interface Patient {
   classificacao?: string;
   observacao?: string;
   alerta?: string;
+  botaoLimboSms?: string;
+  botaoLimboEmail?: string;
+  botaoLimboLigacoes?: string;
   importedAt?: string;
 }
 

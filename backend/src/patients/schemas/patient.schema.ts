@@ -23,6 +23,9 @@ export type PatientDocument = Patient & Document;
       ret.classificacao = ret['CLASSIFICAÇÃO'];
       ret.observacao = ret['OBSERVAÇÃO'];
       ret.alerta = ret['ALERTA'];
+      ret.botaoLimboSms = ret['BOTÃO LIMBO SMS'];
+      ret.botaoLimboEmail = ret['BOTÃO LIMBO EMAIL'];
+      ret.botaoLimboLigacoes = ret['BOTÃO LIMBO LIGAÇÕES'];
       ret.importedAt = ret['_imported_at'];
       
       // Remove campos originais em maiúsculas
@@ -51,6 +54,7 @@ export type PatientDocument = Patient & Document;
       delete ret['_campo_retornos_criado_em'];
       delete ret['_telefone_corrigido_em'];
       delete ret['__v'];
+      delete ret['id'];
       
       return ret;
     }
@@ -98,6 +102,15 @@ export class Patient {
 
   @Prop()
   'ALERTA': string;
+
+  @Prop()
+  'BOTÃO LIMBO SMS': string;
+
+  @Prop()
+  'BOTÃO LIMBO EMAIL': string;
+
+  @Prop()
+  'BOTÃO LIMBO LIGAÇÕES': string;
 
   @Prop()
   '_imported_at': Date;

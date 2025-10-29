@@ -7,6 +7,7 @@ import { patientService } from '@/services/patientService';
 import { Patient } from '@/types';
 import Navbar from '@/components/Navbar';
 import PatientCarousel from '@/components/PatientCarousel';
+import PatientFormFileMaker from '@/components/PatientFormFileMaker';
 import { RefreshCw, Search, Plus } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const loadPatients = async () => {
     try {
@@ -67,6 +69,14 @@ export default function DashboardPage() {
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === patients.length - 1 ? 0 : prev + 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? patients.length - 1 : prev - 1));
   };
 
   return (
@@ -178,7 +188,14 @@ export default function DashboardPage() {
             )}
           </div>
         ) : (
-          <PatientCarousel patients={patients} />
+          <PatientFormFileMaker 
+            patient={patients[currentIndex]} 
+            onUpdate={loadPatients}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+            currentIndex={currentIndex}
+            totalPatients={patients.length}
+          />
         )}
       </main>
     </div>

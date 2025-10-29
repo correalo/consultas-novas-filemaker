@@ -8,9 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface PatientCarouselProps {
   patients: Patient[];
+  onUpdate?: () => void;
 }
 
-export default function PatientCarousel({ patients }: PatientCarouselProps) {
+export default function PatientCarousel({ patients, onUpdate }: PatientCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -92,7 +93,7 @@ export default function PatientCarousel({ patients }: PatientCarouselProps) {
             }}
             className="absolute w-full"
           >
-            <PatientCard patient={patients[currentIndex]} />
+            <PatientCard patient={patients[currentIndex]} onUpdate={onUpdate} />
           </motion.div>
         </AnimatePresence>
       </div>
