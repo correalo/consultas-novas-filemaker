@@ -103,13 +103,13 @@ export default function PatientFormFileMaker({
             <div className="flex gap-1">
               <button
                 onClick={onPrevious}
-                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-50 text-sm"
+                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
               >
                 ◀
               </button>
               <button
                 onClick={onNext}
-                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-50 text-sm"
+                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
               >
                 ▶
               </button>
@@ -153,7 +153,7 @@ export default function PatientFormFileMaker({
 
       {/* Main Content */}
       <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-gray-100 rounded-lg shadow-lg border border-gray-300 p-6">
+        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-6">
           {/* Form Grid - FileMaker Style */}
           <div className="grid grid-cols-12 gap-4">
             {/* Left Column */}
@@ -173,7 +173,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.nome}
                     </div>
                   )}
@@ -220,7 +220,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.dataConsulta}
                     </div>
                   )}
@@ -242,7 +242,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.convenio}
                     </div>
                   )}
@@ -264,7 +264,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.subtipoConvenio}
                     </div>
                   )}
@@ -315,7 +315,7 @@ export default function PatientFormFileMaker({
                     />
                   ) : (
                     <>
-                      <div className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                      <div className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded">
                         {currentPatient.celular}
                       </div>
                       {currentPatient.celular && (
@@ -348,7 +348,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.telFixo}
                     </div>
                   )}
@@ -370,7 +370,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.indicacao}
                     </div>
                   )}
@@ -424,7 +424,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.classificacao}
                     </div>
                   )}
@@ -471,7 +471,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded min-h-[80px]">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[80px]">
                       {currentPatient.observacao}
                     </div>
                   )}
