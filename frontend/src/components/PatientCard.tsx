@@ -30,7 +30,29 @@ export default function PatientCard({ patient, onUpdate }: PatientCardProps) {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await patientService.update(patient._id, editedPatient);
+      
+      // Criar objeto apenas com campos editáveis (sem _id, __v, etc)
+      const updateData = {
+        nome: editedPatient.nome,
+        dataConsulta: editedPatient.dataConsulta,
+        convenio: editedPatient.convenio,
+        subtipoConvenio: editedPatient.subtipoConvenio,
+        resposta: editedPatient.resposta,
+        celular: editedPatient.celular,
+        telFixo: editedPatient.telFixo,
+        dd3: editedPatient.dd3,
+        indicacao: editedPatient.indicacao,
+        resolvido: editedPatient.resolvido,
+        classificacao: editedPatient.classificacao,
+        observacao: editedPatient.observacao,
+        alerta: editedPatient.alerta,
+        ano: editedPatient.ano,
+        botaoLimboSms: editedPatient.botaoLimboSms,
+        botaoLimboEmail: editedPatient.botaoLimboEmail,
+        botaoLimboLigacoes: editedPatient.botaoLimboLigacoes,
+      };
+      
+      await patientService.update(patient._id, updateData);
       setIsEditing(false);
       if (onUpdate) {
         onUpdate();

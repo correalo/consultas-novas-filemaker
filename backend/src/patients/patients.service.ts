@@ -32,8 +32,32 @@ export class PatientsService {
   }
 
   async update(id: string, updatePatientDto: UpdatePatientDto): Promise<Patient> {
+    // Transformar campos de minúsculas para MAIÚSCULAS (formato do MongoDB)
+    const updateData: any = {};
+    
+    if (updatePatientDto.nome !== undefined) updateData['NOME'] = updatePatientDto.nome;
+    if (updatePatientDto.ano !== undefined) updateData['ANO'] = updatePatientDto.ano;
+    // Aceitar qualquer formato de data (string)
+    if (updatePatientDto.dataConsulta !== undefined) {
+      updateData['DATA DA CONSULTA'] = updatePatientDto.dataConsulta;
+    }
+    if (updatePatientDto.convenio !== undefined) updateData['CONVÊNIO'] = updatePatientDto.convenio;
+    if (updatePatientDto.subtipoConvenio !== undefined) updateData['SUBTIPO CONVÊNIO'] = updatePatientDto.subtipoConvenio;
+    if (updatePatientDto.resposta !== undefined) updateData['RESPOSTA'] = updatePatientDto.resposta;
+    if (updatePatientDto.celular !== undefined) updateData['CELULAR'] = updatePatientDto.celular;
+    if (updatePatientDto.dd3 !== undefined) updateData['DD3'] = updatePatientDto.dd3;
+    if (updatePatientDto.telFixo !== undefined) updateData['TEL FIXO'] = updatePatientDto.telFixo;
+    if (updatePatientDto.indicacao !== undefined) updateData['INDICAÇAO'] = updatePatientDto.indicacao;
+    if (updatePatientDto.resolvido !== undefined) updateData['RESOLVIDO'] = updatePatientDto.resolvido;
+    if (updatePatientDto.classificacao !== undefined) updateData['CLASSIFICAÇÃO'] = updatePatientDto.classificacao;
+    if (updatePatientDto.observacao !== undefined) updateData['OBSERVAÇÃO'] = updatePatientDto.observacao;
+    if (updatePatientDto.alerta !== undefined) updateData['ALERTA'] = updatePatientDto.alerta;
+    if (updatePatientDto.botaoLimboSms !== undefined) updateData['BOTÃO LIMBO SMS'] = updatePatientDto.botaoLimboSms;
+    if (updatePatientDto.botaoLimboEmail !== undefined) updateData['BOTÃO LIMBO EMAIL'] = updatePatientDto.botaoLimboEmail;
+    if (updatePatientDto.botaoLimboLigacoes !== undefined) updateData['BOTÃO LIMBO LIGAÇÕES'] = updatePatientDto.botaoLimboLigacoes;
+    
     const patient = await this.patientModel
-      .findByIdAndUpdate(id, updatePatientDto, { new: true })
+      .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
     
     if (!patient) {

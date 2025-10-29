@@ -11,12 +11,12 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Enable validation
+  // Enable validation (desabilitado forbidNonWhitelisted para aceitar todos os campos)
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
+      whitelist: false,
       transform: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false,
     }),
   );
 

@@ -39,14 +39,38 @@ export default function PatientFormFileMaker({
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await patientService.update(patient._id, editedPatient);
+      
+      // Criar objeto apenas com campos editáveis (sem _id, __v, etc)
+      const updateData = {
+        nome: editedPatient.nome,
+        dataConsulta: editedPatient.dataConsulta,
+        convenio: editedPatient.convenio,
+        subtipoConvenio: editedPatient.subtipoConvenio,
+        resposta: editedPatient.resposta,
+        celular: editedPatient.celular,
+        telFixo: editedPatient.telFixo,
+        dd3: editedPatient.dd3,
+        indicacao: editedPatient.indicacao,
+        resolvido: editedPatient.resolvido,
+        classificacao: editedPatient.classificacao,
+        observacao: editedPatient.observacao,
+        alerta: editedPatient.alerta,
+        ano: editedPatient.ano,
+        botaoLimboSms: editedPatient.botaoLimboSms,
+        botaoLimboEmail: editedPatient.botaoLimboEmail,
+        botaoLimboLigacoes: editedPatient.botaoLimboLigacoes,
+      };
+      
+      console.log('Dados sendo enviados:', updateData);
+      await patientService.update(patient._id, updateData);
       setIsEditing(false);
       if (onUpdate) {
         onUpdate();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar:', error);
-      alert('Erro ao salvar alterações');
+      const errorMessage = error?.response?.data?.message || error?.message || 'Erro desconhecido';
+      alert(`Erro ao salvar alterações: ${JSON.stringify(errorMessage)}`);
     } finally {
       setIsSaving(false);
     }
@@ -129,7 +153,7 @@ export default function PatientFormFileMaker({
 
       {/* Main Content */}
       <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg border border-gray-300 p-6">
+        <div className="bg-gray-100 rounded-lg shadow-lg border border-gray-300 p-6">
           {/* Form Grid - FileMaker Style */}
           <div className="grid grid-cols-12 gap-4">
             {/* Left Column */}
@@ -169,21 +193,35 @@ export default function PatientFormFileMaker({
                         currentPatient.dataConsulta 
                           ? (() => {
                               try {
-                                const date = new Date(currentPatient.dataConsulta);
-                                return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0];
+                                // Converter DD/MM/YYYY para YYYY-MM-DD
+                                const parts = currentPatient.dataConsulta.split('/');
+                                if (parts.length === 3) {
+                                  const [day, month, year] = parts;
+                                  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                                }
+                                return '';
                               } catch {
                                 return '';
                               }
                             })()
                           : ''
                       }
-                      onChange={(e) => handleChange('dataConsulta', e.target.value)}
+                      onChange={(e) => {
+                        // Converter YYYY-MM-DD para DD/MM/YYYY
+                        if (e.target.value) {
+                          const [year, month, day] = e.target.value.split('-');
+                          const brDate = `${day}/${month}/${year}`;
+                          handleChange('dataConsulta', brDate);
+                        } else {
+                          handleChange('dataConsulta', '');
+                        }
+                      }}
                       aria-label="Data da consulta"
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
                     <div className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded">
-                      {currentPatient.dataConsulta ? new Date(currentPatient.dataConsulta).toLocaleDateString('pt-BR') : ''}
+                      {currentPatient.dataConsulta}
                     </div>
                   )}
                 </div>
@@ -469,6 +507,7 @@ export default function PatientFormFileMaker({
                             value={currentPatient.alerta || ''}
                             onChange={(e) => handleChange('alerta', e.target.value)}
                             rows={2}
+                            aria-label="Alerta"
                             className="w-full mt-1 px-2 py-1 border border-red-400 rounded text-sm"
                           />
                         ) : (

@@ -1,41 +1,17 @@
-import { IsString, IsNotEmpty, IsEmail, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreatePatientDto {
   @IsString()
-  @IsNotEmpty()
-  nome: string;
-
-  @IsNumber()
   @IsOptional()
-  idade?: number;
+  nome?: string;
 
   @IsString()
   @IsOptional()
-  telefone?: string;
-
-  @IsEmail()
-  @IsOptional()
-  email?: string;
+  ano?: string;
 
   @IsString()
-  @IsOptional()
-  cpf?: string;
-
-  @IsString()
-  @IsOptional()
-  endereco?: string;
-
-  @IsDateString()
   @IsOptional()
   dataConsulta?: string;
-
-  @IsString()
-  @IsOptional()
-  status?: string;
-
-  @IsString()
-  @IsOptional()
-  observacoes?: string;
 
   @IsString()
   @IsOptional()
@@ -43,9 +19,53 @@ export class CreatePatientDto {
 
   @IsString()
   @IsOptional()
-  especialidade?: string;
+  subtipoConvenio?: string;
 
   @IsString()
   @IsOptional()
-  medico?: string;
+  resposta?: string;
+
+  @IsString()
+  @IsOptional()
+  celular?: string;
+
+  @IsString()
+  @IsOptional()
+  dd3?: string;
+
+  @IsString()
+  @IsOptional()
+  telFixo?: string;
+
+  @IsString()
+  @IsOptional()
+  indicacao?: string;
+
+  @IsString()
+  @IsOptional()
+  resolvido?: string;
+
+  @IsString()
+  @IsOptional()
+  classificacao?: string;
+
+  @IsString()
+  @IsOptional()
+  observacao?: string;
+
+  @IsString()
+  @IsOptional()
+  alerta?: string;
+
+  @IsString()
+  @IsOptional()
+  botaoLimboSms?: string;
+
+  @IsString()
+  @IsOptional()
+  botaoLimboEmail?: string;
+
+  @IsString()
+  @IsOptional()
+  botaoLimboLigacoes?: string;
 }
