@@ -3,32 +3,109 @@
 import { useState } from 'react';
 import { Patient } from '@/types';
 import { patientService } from '@/services/patientService';
-import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle } from 'lucide-react';
+import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search } from 'lucide-react';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 interface PatientFormFileMakerProps {
   patient: Patient;
+  allPatients?: Patient[];
   onUpdate?: () => void;
   onNext?: () => void;
   onPrevious?: () => void;
+  onSelectPatient?: (patient: Patient) => void;
   currentIndex: number;
   totalPatients: number;
 }
 
 export default function PatientFormFileMaker({ 
   patient, 
+  allPatients = [],
   onUpdate, 
   onNext, 
   onPrevious,
+  onSelectPatient,
   currentIndex,
   totalPatients 
 }: PatientFormFileMakerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [editedPatient, setEditedPatient] = useState<Patient>(patient);
+  const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
+  const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
 
   const handleEdit = () => {
     setIsEditing(true);
+    setIsSearching(false);
     setEditedPatient(patient);
+  };
+
+  const handleSearch = () => {
+    setIsSearching(!isSearching);
+    setIsEditing(false);
+    setSearchTerms({});
+  };
+
+  const matchDatePattern = (dateStr: string, pattern: string): boolean => {
+    // Suporta padrões: DD/MM/AAAA, */*/AAAA, DD/*/AAAA, */MM/AAAA, DD/MM/AAAA...DD/MM/AAAA
+    if (pattern.includes('...')) {
+      // Intervalo de datas
+      const [start, end] = pattern.split('...').map(d => d.trim());
+      const [dD, dM, dY] = dateStr.split('/');
+      const [sD, sM, sY] = start.split('/');
+      const [eD, eM, eY] = end.split('/');
+      
+      const dateNum = parseInt(dY + dM.padStart(2, '0') + dD.padStart(2, '0'));
+      const startNum = parseInt(sY + sM.padStart(2, '0') + sD.padStart(2, '0'));
+      const endNum = parseInt(eY + eM.padStart(2, '0') + eD.padStart(2, '0'));
+      
+      return dateNum >= startNum && dateNum <= endNum;
+    }
+    
+    const [day, month, year] = dateStr.split('/');
+    const [pDay, pMonth, pYear] = pattern.split('/');
+    
+    if (pYear && pYear !== '*' && year !== pYear) return false;
+    if (pMonth && pMonth !== '*' && month !== pMonth) return false;
+    if (pDay && pDay !== '*' && day !== pDay) return false;
+    
+    return true;
+  };
+
+  const handleSearchChange = (field: string, value: string) => {
+    setSearchTerms((prev: Record<string, string>) => ({ ...prev, [field]: value }));
+    
+    // Filtrar pacientes baseado no campo e valor
+    if (value.trim() && allPatients.length > 0) {
+      const filtered = allPatients.filter(p => {
+        const fieldValue = (p[field as keyof Patient] || '').toString();
+        
+        // Se for campo de data e tiver padrão especial
+        if (field === 'dataConsulta' && (value.includes('*') || value.includes('...'))) {
+          return matchDatePattern(fieldValue, value);
+        }
+        
+        return fieldValue.toLowerCase().includes(value.toLowerCase());
+      });
+      setFilteredPatients(filtered);
+      setShowSuggestions({ ...showSuggestions, [field]: field === 'nome' });
+    } else {
+      setFilteredPatients([]);
+      setShowSuggestions({ ...showSuggestions, [field]: false });
+    }
+  };
+
+  const handleSelectSuggestion = (patient: Patient, field: string) => {
+    console.log('Selecionado paciente:', patient.nome, patient._id);
+    setShowSuggestions({ ...showSuggestions, [field]: false });
+    setFilteredPatients([]);
+    setSearchTerms({});
+    setIsSearching(false);
+    if (onSelectPatient) {
+      onSelectPatient(patient);
+    }
   };
 
   const handleCancel = () => {
@@ -99,7 +176,7 @@ export default function PatientFormFileMaker({
       {/* Header Bar - FileMaker Style */}
       <div className="bg-gradient-to-b from-[#d0d0d0] to-[#b8b8b8] border-b border-gray-400 px-4 py-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <div className="flex gap-1">
               <button
                 onClick={onPrevious}
@@ -114,19 +191,69 @@ export default function PatientFormFileMaker({
                 ▶
               </button>
             </div>
+            
+            {/* Slider de navegação */}
+            <div className="flex items-center gap-3 flex-1 max-w-md">
+              <span className="text-xs font-medium text-gray-700 min-w-[20px]">
+                {currentIndex + 1}
+              </span>
+              <div className="flex-1">
+                <Slider
+                  min={0}
+                  max={totalPatients - 1}
+                  value={currentIndex}
+                  onChange={(value) => {
+                    const index = typeof value === 'number' ? value : value[0];
+                    const diff = index - currentIndex;
+                    if (diff > 0) {
+                      for (let i = 0; i < diff; i++) onNext?.();
+                    } else if (diff < 0) {
+                      for (let i = 0; i < Math.abs(diff); i++) onPrevious?.();
+                    }
+                  }}
+                  trackStyle={{ backgroundColor: '#3b82f6', height: 8 }}
+                  railStyle={{ backgroundColor: '#d1d5db', height: 8 }}
+                  handleStyle={{
+                    borderColor: '#3b82f6',
+                    backgroundColor: '#ffffff',
+                    width: 18,
+                    height: 18,
+                    marginTop: -5,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }}
+                />
+              </div>
+              <span className="text-xs font-medium text-gray-700">
+                {totalPatients}
+              </span>
+            </div>
+            
             <span className="text-sm font-medium text-gray-700">
-              {currentIndex + 1} de {totalPatients}
+              Total ({totalPatients} Registros)
             </span>
           </div>
           
           <div className="flex gap-2">
             {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium"
-              >
-                EDITAR
-              </button>
+              <>
+                <button
+                  onClick={handleEdit}
+                  className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium"
+                >
+                  EDITAR
+                </button>
+                <button
+                  onClick={handleSearch}
+                  className={`px-4 py-1.5 rounded shadow-sm text-sm font-medium flex items-center gap-1 ${
+                    isSearching 
+                      ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                  }`}
+                >
+                  <Search className="w-4 h-4" />
+                  {isSearching ? 'SAIR DA BUSCA' : 'BUSCAR'}
+                </button>
+              </>
             ) : (
               <>
                 <button
@@ -163,8 +290,32 @@ export default function PatientFormFileMaker({
                 <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
                   NOME
                 </label>
-                <div className="flex-1">
-                  {isEditing ? (
+                <div className="flex-1 relative">
+                  {isSearching ? (
+                    <>
+                      <input
+                        type="text"
+                        value={searchTerms.nome || ''}
+                        onChange={(e) => handleSearchChange('nome', e.target.value)}
+                        placeholder="Buscar por nome..."
+                        aria-label="Buscar nome"
+                        className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                      />
+                      {showSuggestions.nome && filteredPatients.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                          {filteredPatients.map((p) => (
+                            <div
+                              key={p._id}
+                              onClick={() => handleSelectSuggestion(p, 'nome')}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0 text-sm"
+                            >
+                              {p.nome}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.nome}
@@ -185,8 +336,39 @@ export default function PatientFormFileMaker({
                 <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
                   DATA DA CONSULTA
                 </label>
-                <div className="flex-1">
-                  {isEditing ? (
+                <div className="flex-1 relative">
+                  {isSearching ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={searchTerms.dataConsulta || ''}
+                        onChange={(e) => handleSearchChange('dataConsulta', e.target.value)}
+                        placeholder="DD/MM/AAAA ou */*/2025 ou 01/*/2024 ou 31/01/2024...15/02/2024"
+                        aria-label="Buscar data"
+                        className="flex-1 px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'date';
+                          input.onchange = (e) => {
+                            const target = e.target as HTMLInputElement;
+                            if (target.value) {
+                              const [year, month, day] = target.value.split('-');
+                              const brDate = `${day}/${month}/${year}`;
+                              handleSearchChange('dataConsulta', brDate);
+                            }
+                          };
+                          input.click();
+                        }}
+                        className="px-3 py-1.5 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300"
+                        aria-label="Escolher data"
+                      >
+                        📅
+                      </button>
+                    </div>
+                  ) : isEditing ? (
                     <input
                       type="date"
                       value={
@@ -233,7 +415,16 @@ export default function PatientFormFileMaker({
                   CONVÊNIO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.convenio || ''}
+                      onChange={(e) => handleSearchChange('convenio', e.target.value)}
+                      placeholder="Buscar por convênio..."
+                      aria-label="Buscar convênio"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.convenio || ''}
@@ -255,7 +446,16 @@ export default function PatientFormFileMaker({
                   SUBTIPO CONVÊNIO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.subtipoConvenio || ''}
+                      onChange={(e) => handleSearchChange('subtipoConvenio', e.target.value)}
+                      placeholder="Buscar por subtipo..."
+                      aria-label="Buscar subtipo"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.subtipoConvenio || ''}
@@ -277,7 +477,19 @@ export default function PatientFormFileMaker({
                   RESPOSTA
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <select
+                      value={searchTerms.resposta || ''}
+                      onChange={(e) => handleSearchChange('resposta', e.target.value)}
+                      aria-label="Buscar resposta"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    >
+                      <option value="">Todas...</option>
+                      <option value="NÃO COMPARECEU">NÃO COMPARECEU</option>
+                      <option value="COMPARECEU">COMPARECEU</option>
+                      <option value="LIMBO">LIMBO</option>
+                    </select>
+                  ) : isEditing ? (
                     <select
                       value={currentPatient.resposta || ''}
                       onChange={(e) => handleChange('resposta', e.target.value)}
@@ -304,7 +516,16 @@ export default function PatientFormFileMaker({
                   CEL 1
                 </label>
                 <div className="flex-1 flex gap-2">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.celular || ''}
+                      onChange={(e) => handleSearchChange('celular', e.target.value)}
+                      placeholder="Buscar por celular..."
+                      aria-label="Buscar celular"
+                      className="flex-1 px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.celular || ''}
@@ -338,7 +559,16 @@ export default function PatientFormFileMaker({
                   TEL FIXO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.telFixo || ''}
+                      onChange={(e) => handleSearchChange('telFixo', e.target.value)}
+                      placeholder="Buscar por telefone..."
+                      aria-label="Buscar telefone"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.telFixo || ''}
@@ -361,7 +591,16 @@ export default function PatientFormFileMaker({
                   INDICAÇÃO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.indicacao || ''}
+                      onChange={(e) => handleSearchChange('indicacao', e.target.value)}
+                      placeholder="Buscar por indicação..."
+                      aria-label="Buscar indicação"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.indicacao || ''}
@@ -383,7 +622,19 @@ export default function PatientFormFileMaker({
                   RESOLVIDO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <select
+                      value={searchTerms.resolvido || ''}
+                      onChange={(e) => handleSearchChange('resolvido', e.target.value)}
+                      aria-label="Buscar status resolvido"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    >
+                      <option value="">Todos...</option>
+                      <option value="SIM">SIM</option>
+                      <option value="NÃO">NÃO</option>
+                      <option value="LIMBO">LIMBO</option>
+                    </select>
+                  ) : isEditing ? (
                     <select
                       value={currentPatient.resolvido || ''}
                       onChange={(e) => handleChange('resolvido', e.target.value)}
@@ -415,7 +666,16 @@ export default function PatientFormFileMaker({
                   CLASSIFICAÇÃO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.classificacao || ''}
+                      onChange={(e) => handleSearchChange('classificacao', e.target.value)}
+                      placeholder="Buscar por classificação..."
+                      aria-label="Buscar classificação"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       value={currentPatient.classificacao || ''}
@@ -462,7 +722,16 @@ export default function PatientFormFileMaker({
                   OBSERVAÇÃO
                 </label>
                 <div className="flex-1">
-                  {isEditing ? (
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.observacao || ''}
+                      onChange={(e) => handleSearchChange('observacao', e.target.value)}
+                      placeholder="Buscar por observação..."
+                      aria-label="Buscar observação"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
                     <textarea
                       value={currentPatient.observacao || ''}
                       onChange={(e) => handleChange('observacao', e.target.value)}
@@ -471,7 +740,7 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[80px]">
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[80px] whitespace-pre-wrap">
                       {currentPatient.observacao}
                     </div>
                   )}

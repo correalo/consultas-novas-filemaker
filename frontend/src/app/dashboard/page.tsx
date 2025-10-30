@@ -189,10 +189,15 @@ export default function DashboardPage() {
           </div>
         ) : (
           <PatientFormFileMaker 
-            patient={patients[currentIndex]} 
+            patient={patients[currentIndex]}
+            allPatients={patients}
             onUpdate={loadPatients}
             onNext={handleNext}
             onPrevious={handlePrevious}
+            onSelectPatient={(patient) => {
+              const index = patients.findIndex(p => p._id === patient._id);
+              if (index !== -1) setCurrentIndex(index);
+            }}
             currentIndex={currentIndex}
             totalPatients={patients.length}
           />
