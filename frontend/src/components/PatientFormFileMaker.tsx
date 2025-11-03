@@ -922,8 +922,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.dataCirurgia || '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.dataCirurgia || '\u00A0'}
                     </div>
                   )}
                 </div>
@@ -945,8 +945,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.profissao || '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.profissao || '\u00A0'}
                     </div>
                   )}
                 </div>
@@ -971,8 +971,8 @@ export default function PatientFormFileMaker({
                       <option value="OUTRO">OUTRO</option>
                     </select>
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.sexo || '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.sexo || '\u00A0'}
                     </div>
                   )}
                 </div>
@@ -994,8 +994,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.dataNascimento || '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.dataNascimento || '\u00A0'}
                     </div>
                   )}
                 </div>
@@ -1017,8 +1017,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.idade ? `${currentPatient.idade} anos` : '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.idade ? `${currentPatient.idade} anos` : '\u00A0'}
                     </div>
                   )}
                 </div>
@@ -1040,8 +1040,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.email || '-'}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.email || '\u00A0'}
                     </div>
                   )}
                 </div>

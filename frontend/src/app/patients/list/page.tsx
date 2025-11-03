@@ -344,67 +344,81 @@ export default function PatientsListPage() {
 
                 <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
                   {/* Data Consulta */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="w-4 h-4 text-blue-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Consulta</p>
-                      <p className="font-medium">{patient.dataConsulta || '-'}</p>
+                  {patient.dataConsulta && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Consulta</p>
+                        <p className="font-medium">{patient.dataConsulta}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Data Cirurgia */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="w-4 h-4 text-red-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Cirurgia</p>
-                      <p className="font-medium">{patient.dataCirurgia || '-'}</p>
+                  {patient.dataCirurgia && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Calendar className="w-4 h-4 text-red-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Cirurgia</p>
+                        <p className="font-medium">{patient.dataCirurgia}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Celular */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Phone className="w-4 h-4 text-green-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Celular</p>
-                      <p className="font-medium">{patient.celular || '-'}</p>
+                  {patient.celular && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Phone className="w-4 h-4 text-green-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Celular</p>
+                        <p className="font-medium">{patient.celular}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Sexo */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <UserIcon className="w-4 h-4 text-purple-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Sexo</p>
-                      <p className="font-medium">{patient.sexo || '-'}</p>
+                  {patient.sexo && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <UserIcon className="w-4 h-4 text-purple-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Sexo</p>
+                        <p className="font-medium">{patient.sexo}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Data Nascimento */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Cake className="w-4 h-4 text-pink-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Nascimento</p>
-                      <p className="font-medium">{patient.dataNascimento || '-'}</p>
+                  {patient.dataNascimento && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Cake className="w-4 h-4 text-pink-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Nascimento</p>
+                        <p className="font-medium">{patient.dataNascimento}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Idade */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Cake className="w-4 h-4 text-orange-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Idade</p>
-                      <p className="font-medium">{patient.idade ? `${patient.idade} anos` : '-'}</p>
+                  {patient.idade && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Cake className="w-4 h-4 text-orange-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Idade</p>
+                        <p className="font-medium">{patient.idade} anos</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Profissão */}
-                  <div className="flex items-center gap-2 text-gray-600 col-span-2">
-                    <Briefcase className="w-4 h-4 text-teal-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Profissão</p>
-                      <p className="font-medium">{patient.profissao || '-'}</p>
+                  {patient.profissao && (
+                    <div className="flex items-center gap-2 text-gray-600 col-span-2">
+                      <Briefcase className="w-4 h-4 text-teal-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Profissão</p>
+                        <p className="font-medium">{patient.profissao}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Email */}
                   {patient.email && (
