@@ -6,27 +6,25 @@ import { isAuthenticated } from '@/lib/auth';
 import { patientService } from '@/services/patientService';
 import { Patient } from '@/types';
 import Navbar from '@/components/Navbar';
-import PatientCarousel from '@/components/PatientCarousel';
-import PatientFormFileMaker from '@/components/PatientFormFileMaker';
-import { RefreshCw, Search, Plus } from 'lucide-react';
+import { Users, Calendar, AlertTriangle, TrendingUp, FileText, ArrowRight, Briefcase, User as UserIcon, Cake, Mail } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const loadPatients = async () => {
     try {
       setLoading(true);
-      setError('');
       const data = await patientService.getAll();
+      console.log('📊 Pacientes carregados:', data.length);
+      if (data.length > 0) {
+        console.log('🔍 Primeiro paciente:', data[0]);
+        console.log('📋 Campos disponíveis:', Object.keys(data[0]));
+      }
       setPatients(data);
     } catch (err: any) {
-      setError('Erro ao carregar pacientes. Tente novamente.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -46,161 +44,212 @@ export default function DashboardPage() {
     return null;
   }
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      loadPatients();
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError('');
-      const data = await patientService.search(searchQuery);
-      setPatients(data);
-    } catch (err: any) {
-      setError('Erro ao buscar pacientes.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === patients.length - 1 ? 0 : prev + 1));
-  };
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? patients.length - 1 : prev - 1));
-  };
+  const totalResolvidos = patients.filter((p) => p.resolvido && p.resolvido !== 'LIMBO').length;
+  const totalComAlerta = patients.filter((p) => p.alerta).length;
+  const totalCompareceu = patients.filter((p) => p.resposta === 'COMPARECEU').length;
+  const totalNaoCompareceu = patients.filter((p) => p.resposta === 'NÃO COMPARECEU').length;
 
   return (
-    <div className="min-h-screen bg-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
-          <p className="text-gray-600">Visualize e gerencie seus pacientes</p>
+          <p className="text-gray-600">Visão geral do sistema de gerenciamento</p>
         </div>
 
-        {/* Search and Actions */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Buscar por nome, telefone ou convênio..."
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-            <button
-              onClick={handleSearch}
-              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
-            >
-              <Search className="w-5 h-5" />
-              Buscar
-            </button>
-            <button
-              onClick={loadPatients}
-              disabled={loading}
-              className="px-6 py-3 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-              Atualizar
-            </button>
-          </div>
-        </div>
-
-        {/* Stats */}
-        {!loading && patients.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-blue-100 text-sm font-medium mb-1">Total de Pacientes</p>
-              <p className="text-4xl font-bold">{patients.length}</p>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-green-100 text-sm font-medium mb-1">Resolvidos</p>
-              <p className="text-4xl font-bold">
-                {patients.filter((p) => p.resolvido && p.resolvido !== 'LIMBO').length}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-purple-100 text-sm font-medium mb-1">Com Alerta</p>
-              <p className="text-4xl font-bold">
-                {patients.filter((p) => p.alerta).length}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Content */}
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Carregando pacientes...</p>
+              <p className="text-gray-600">Carregando dados...</p>
             </div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl text-center">
-            <p className="font-medium">{error}</p>
-            <button
-              onClick={loadPatients}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Tentar Novamente
-            </button>
-          </div>
-        ) : patients.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-12 text-center">
-            <div className="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-10 h-10 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Nenhum paciente encontrado</h3>
-            <p className="text-gray-600 mb-6">
-              {searchQuery
-                ? 'Tente buscar com outros termos'
-                : 'Adicione pacientes ao banco de dados para começar'}
-            </p>
-            {searchQuery && (
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  loadPatients();
-                }}
-                className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                Limpar Busca
-              </button>
-            )}
           </div>
         ) : (
-          <PatientFormFileMaker 
-            patient={patients[currentIndex]}
-            allPatients={patients}
-            onUpdate={loadPatients}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            onSelectPatient={(patient) => {
-              const index = patients.findIndex(p => p._id === patient._id);
-              if (index !== -1) setCurrentIndex(index);
-            }}
-            currentIndex={currentIndex}
-            totalPatients={patients.length}
-          />
+          <>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <Users className="w-8 h-8 opacity-80" />
+                  <TrendingUp className="w-5 h-5 opacity-60" />
+                </div>
+                <p className="text-blue-100 text-sm font-medium mb-1">Total de Pacientes</p>
+                <p className="text-4xl font-bold">{patients.length}</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <Calendar className="w-8 h-8 opacity-80" />
+                  <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{totalCompareceu}</span>
+                </div>
+                <p className="text-green-100 text-sm font-medium mb-1">Resolvidos</p>
+                <p className="text-4xl font-bold">{totalResolvidos}</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <AlertTriangle className="w-8 h-8 opacity-80" />
+                  <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{totalNaoCompareceu}</span>
+                </div>
+                <p className="text-orange-100 text-sm font-medium mb-1">Com Alerta</p>
+                <p className="text-4xl font-bold">{totalComAlerta}</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <FileText className="w-8 h-8 opacity-80" />
+                  <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Hoje</span>
+                </div>
+                <p className="text-purple-100 text-sm font-medium mb-1">Consultas Hoje</p>
+                <p className="text-4xl font-bold">
+                  {patients.filter(p => {
+                    const today = new Date().toLocaleDateString('pt-BR');
+                    return p.dataConsulta === today;
+                  }).length}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <button
+                onClick={() => router.push('/patients')}
+                className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all group text-left"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-blue-100 rounded-lg p-3">
+                    <Users className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Gerenciar Pacientes</h3>
+                <p className="text-gray-600">Visualize, edite e gerencie todos os pacientes cadastrados</p>
+              </button>
+
+              <button
+                onClick={() => router.push('/patients/new')}
+                className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all group text-left"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-green-100 rounded-lg p-3">
+                    <Calendar className="w-8 h-8 text-green-600" />
+                  </div>
+                  <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Novo Paciente</h3>
+                <p className="text-gray-600">Cadastre um novo paciente no sistema</p>
+              </button>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Pacientes Recentes</h3>
+              {patients.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Nenhum paciente cadastrado ainda</p>
+              ) : (
+                <div className="space-y-4">
+                  {patients.slice(0, 5).map((patient) => (
+                    <div
+                      key={patient._id}
+                      className="p-5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+                      onClick={() => router.push('/patients')}
+                    >
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center">
+                            <Users className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-800 text-lg">{patient.nome}</p>
+                            <p className="text-sm text-gray-500">{patient.convenio || 'Sem convênio'}</p>
+                          </div>
+                        </div>
+                        <span className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                          patient.resposta === 'COMPARECEU'
+                            ? 'bg-green-100 text-green-700'
+                            : patient.resposta === 'NÃO COMPARECEU'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {patient.resposta || 'LIMBO'}
+                        </span>
+                      </div>
+
+                      {/* Info Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                        {/* Data Consulta */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Consulta</p>
+                            <p className="font-medium">{patient.dataConsulta || '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Data Cirurgia */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Calendar className="w-4 h-4 text-red-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Cirurgia</p>
+                            <p className="font-medium">{patient.dataCirurgia || '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Sexo */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <UserIcon className="w-4 h-4 text-purple-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Sexo</p>
+                            <p className="font-medium">{patient.sexo || '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Data Nascimento */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Cake className="w-4 h-4 text-pink-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Nascimento</p>
+                            <p className="font-medium">{patient.dataNascimento || '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Idade */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Cake className="w-4 h-4 text-orange-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Idade</p>
+                            <p className="font-medium">{patient.idade ? `${patient.idade} anos` : '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Profissão */}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Briefcase className="w-4 h-4 text-green-500" />
+                          <div>
+                            <p className="text-xs text-gray-500">Profissão</p>
+                            <p className="font-medium">{patient.profissao || '-'}</p>
+                          </div>
+                        </div>
+
+                        {/* Email */}
+                        <div className="flex items-center gap-2 text-gray-600 col-span-2">
+                          <Mail className="w-4 h-4 text-indigo-500" />
+                          <div className="flex-1">
+                            <p className="text-xs text-gray-500">Email</p>
+                            <p className="font-medium truncate">{patient.email || '-'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </main>
     </div>

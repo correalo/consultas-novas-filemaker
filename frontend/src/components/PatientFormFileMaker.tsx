@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Patient } from '@/types';
 import { patientService } from '@/services/patientService';
-import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search } from 'lucide-react';
+import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus } from 'lucide-react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
@@ -14,6 +14,7 @@ interface PatientFormFileMakerProps {
   onNext?: () => void;
   onPrevious?: () => void;
   onSelectPatient?: (patient: Patient) => void;
+  onCreateNew?: () => void;
   currentIndex: number;
   totalPatients: number;
 }
@@ -25,6 +26,7 @@ export default function PatientFormFileMaker({
   onNext, 
   onPrevious,
   onSelectPatient,
+  onCreateNew,
   currentIndex,
   totalPatients 
 }: PatientFormFileMakerProps) {
@@ -113,6 +115,28 @@ export default function PatientFormFileMaker({
     setEditedPatient(patient);
   };
 
+  const handleDelete = async () => {
+    if (!confirm('Tem certeza que deseja deletar este paciente?')) {
+      return;
+    }
+    
+    try {
+      setIsSaving(true);
+      await patientService.delete(patient._id);
+      setIsEditing(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+      alert('Paciente deletado com sucesso!');
+    } catch (error: any) {
+      console.error('Erro ao deletar:', error);
+      const errorMessage = error?.response?.data?.message || error?.message || 'Erro desconhecido';
+      alert(`Erro ao deletar paciente: ${JSON.stringify(errorMessage)}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -173,9 +197,142 @@ export default function PatientFormFileMaker({
 
   return (
     <div className="bg-[#e8e8e8] min-h-screen">
-      {/* Header Bar - FileMaker Style */}
-      <div className="bg-gradient-to-b from-[#d0d0d0] to-[#b8b8b8] border-b border-gray-400 px-4 py-2">
-        <div className="flex items-center justify-between">
+      {/* Header Bar - FileMaker Style - Responsivo */}
+      <div className="bg-gradient-to-b from-[#d0d0d0] to-[#b8b8b8] border-b border-gray-400 px-2 sm:px-4 py-2">
+        {/* Mobile/Tablet: Stack vertical */}
+        <div className="flex flex-col gap-2 lg:hidden">
+          {/* Linha 1: Navegação, slider e contador */}
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1">
+              <button
+                onClick={onPrevious}
+                className="px-2 sm:px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
+              >
+                ◀
+              </button>
+              <button
+                onClick={onNext}
+                className="px-2 sm:px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
+              >
+                ▶
+              </button>
+            </div>
+            
+            {/* Slider de navegação mobile */}
+            <div className="flex items-center gap-2 flex-1">
+              <span className="text-xs font-medium text-gray-700 min-w-[20px]">
+                {currentIndex + 1}
+              </span>
+              <div className="flex-1">
+                <Slider
+                  min={0}
+                  max={totalPatients - 1}
+                  value={currentIndex}
+                  onChange={(value) => {
+                    const index = typeof value === 'number' ? value : value[0];
+                    const diff = index - currentIndex;
+                    if (diff > 0) {
+                      for (let i = 0; i < diff; i++) onNext?.();
+                    } else if (diff < 0) {
+                      for (let i = 0; i < Math.abs(diff); i++) onPrevious?.();
+                    }
+                  }}
+                  trackStyle={{ backgroundColor: '#3b82f6', height: 6 }}
+                  railStyle={{ backgroundColor: '#d1d5db', height: 6 }}
+                  handleStyle={{
+                    borderColor: '#3b82f6',
+                    backgroundColor: '#ffffff',
+                    width: 16,
+                    height: 16,
+                    marginTop: -5,
+                  }}
+                />
+              </div>
+              <span className="text-xs font-medium text-gray-700">
+                {totalPatients}
+              </span>
+            </div>
+          </div>
+          
+          {/* Linha 2: Total de registros (mobile) */}
+          <div className="text-center">
+            <span className="text-xs sm:text-sm font-medium text-gray-700">
+              Total ({totalPatients} Registros)
+            </span>
+          </div>
+          
+          {/* Linha 3: Botões de ação */}
+          <div className="flex gap-1 sm:gap-2 flex-wrap">
+            {!isEditing ? (
+              <>
+                <button
+                  onClick={onUpdate}
+                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
+                >
+                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">ATUALIZAR</span>
+                  <span className="sm:hidden">ATU</span>
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-xs sm:text-sm font-medium"
+                >
+                  EDITAR
+                </button>
+                <button
+                  onClick={handleSearch}
+                  className={`flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 rounded shadow-sm text-xs sm:text-sm font-medium flex items-center justify-center gap-1 ${
+                    isSearching 
+                      ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                  }`}
+                >
+                  <Search className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{isSearching ? 'SAIR' : 'BUSCAR'}</span>
+                </button>
+                <button
+                  onClick={onCreateNew}
+                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
+                >
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">NOVO</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex-1 px-2 sm:px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                  SALVAR
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isSaving}
+                  className="flex-1 px-2 sm:px-4 py-1.5 bg-orange-600 text-white rounded shadow-sm hover:bg-orange-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">DELETAR</span>
+                  <span className="sm:hidden">DEL</span>
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                  className="flex-1 px-2 sm:px-4 py-1.5 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">CANCELAR</span>
+                  <span className="sm:hidden">CANC</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop: Layout horizontal original */}
+        <div className="hidden lg:flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
             <div className="flex gap-1">
               <button
@@ -237,6 +394,13 @@ export default function PatientFormFileMaker({
             {!isEditing ? (
               <>
                 <button
+                  onClick={onUpdate}
+                  className="px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-sm font-medium flex items-center gap-1"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  ATUALIZAR
+                </button>
+                <button
                   onClick={handleEdit}
                   className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium"
                 >
@@ -253,6 +417,13 @@ export default function PatientFormFileMaker({
                   <Search className="w-4 h-4" />
                   {isSearching ? 'SAIR DA BUSCA' : 'BUSCAR'}
                 </button>
+                <button
+                  onClick={onCreateNew}
+                  className="px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-sm font-medium flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  NOVO
+                </button>
               </>
             ) : (
               <>
@@ -263,6 +434,14 @@ export default function PatientFormFileMaker({
                 >
                   <Save className="w-4 h-4" />
                   SALVAR
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isSaving}
+                  className="px-4 py-1.5 bg-orange-600 text-white rounded shadow-sm hover:bg-orange-700 text-sm font-medium disabled:opacity-50 flex items-center gap-1"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  DELETAR
                 </button>
                 <button
                   onClick={handleCancel}
@@ -279,15 +458,15 @@ export default function PatientFormFileMaker({
       </div>
 
       {/* Main Content */}
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-6">
-          {/* Form Grid - FileMaker Style */}
-          <div className="grid grid-cols-12 gap-4">
+      <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto">
+        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6">
+          {/* Form Grid - FileMaker Style - Responsivo */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column */}
-            <div className="col-span-7 space-y-4">
+            <div className="lg:col-span-7 space-y-3 sm:space-y-4">
               {/* Nome */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   NOME
                 </label>
                 <div className="flex-1 relative">
@@ -332,8 +511,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Data da Consulta */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   DATA DA CONSULTA
                 </label>
                 <div className="flex-1 relative">
@@ -369,38 +548,62 @@ export default function PatientFormFileMaker({
                       </button>
                     </div>
                   ) : isEditing ? (
-                    <input
-                      type="date"
-                      value={
-                        currentPatient.dataConsulta 
-                          ? (() => {
-                              try {
-                                // Converter DD/MM/YYYY para YYYY-MM-DD
-                                const parts = currentPatient.dataConsulta.split('/');
-                                if (parts.length === 3) {
-                                  const [day, month, year] = parts;
-                                  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                                }
-                                return '';
-                              } catch {
-                                return '';
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={currentPatient.dataConsulta || ''}
+                        onChange={(e) => {
+                          const numbers = e.target.value.replace(/\D/g, '');
+                          let masked = numbers;
+                          if (numbers.length >= 2) {
+                            masked = numbers.slice(0, 2) + '/' + numbers.slice(2);
+                          }
+                          if (numbers.length >= 4) {
+                            masked = numbers.slice(0, 2) + '/' + numbers.slice(2, 4) + '/' + numbers.slice(4, 8);
+                          }
+                          handleChange('dataConsulta', masked);
+                        }}
+                        placeholder="DD/MM/AAAA"
+                        maxLength={10}
+                        aria-label="Data da consulta"
+                        className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'date';
+                          
+                          // Converter data atual para formato YYYY-MM-DD se existir
+                          if (currentPatient.dataConsulta) {
+                            try {
+                              const parts = currentPatient.dataConsulta.split('/');
+                              if (parts.length === 3) {
+                                const [day, month, year] = parts;
+                                input.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                               }
-                            })()
-                          : ''
-                      }
-                      onChange={(e) => {
-                        // Converter YYYY-MM-DD para DD/MM/YYYY
-                        if (e.target.value) {
-                          const [year, month, day] = e.target.value.split('-');
-                          const brDate = `${day}/${month}/${year}`;
-                          handleChange('dataConsulta', brDate);
-                        } else {
-                          handleChange('dataConsulta', '');
-                        }
-                      }}
-                      aria-label="Data da consulta"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                            } catch (e) {
+                              console.log('Erro ao converter data');
+                            }
+                          }
+                          
+                          input.onchange = (e) => {
+                            const target = e.target as HTMLInputElement;
+                            if (target.value) {
+                              const [year, month, day] = target.value.split('-');
+                              const brDate = `${day}/${month}/${year}`;
+                              handleChange('dataConsulta', brDate);
+                            }
+                          };
+                          
+                          input.click();
+                        }}
+                        className="px-3 py-1.5 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300"
+                        aria-label="Escolher data"
+                      >
+                        📅
+                      </button>
+                    </div>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.dataConsulta}
@@ -410,28 +613,115 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Convênio */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   CONVÊNIO
                 </label>
                 <div className="flex-1">
                   {isSearching ? (
-                    <input
-                      type="text"
+                    <select
                       value={searchTerms.convenio || ''}
                       onChange={(e) => handleSearchChange('convenio', e.target.value)}
-                      placeholder="Buscar por convênio..."
                       aria-label="Buscar convênio"
                       className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
-                    />
+                    >
+                      <option value="">Todos...</option>
+                      <option value="PARTICULAR">PARTICULAR</option>
+                      <option value="SULAMERICA">SULAMERICA</option>
+                      <option value="BRADESCO">BRADESCO</option>
+                      <option value="ABET">ABET</option>
+                      <option value="ALLIANZ">ALLIANZ</option>
+                      <option value="AMEPLAN">AMEPLAN</option>
+                      <option value="AMIL">AMIL</option>
+                      <option value="AMAFRESP">AMAFRESP</option>
+                      <option value="CABESP">CABESP</option>
+                      <option value="CARE PLUS">CARE PLUS</option>
+                      <option value="CASSI">CASSI</option>
+                      <option value="CET">CET</option>
+                      <option value="CLASSES LABORIOSAS">CLASSES LABORIOSAS</option>
+                      <option value="CUIDAR ME">CUIDAR ME</option>
+                      <option value="ECONOMUS">ECONOMUS</option>
+                      <option value="EMBRATEL">EMBRATEL</option>
+                      <option value="FUNDACAO CESP">FUNDACAO CESP</option>
+                      <option value="GAMA">GAMA</option>
+                      <option value="GEAP">GEAP</option>
+                      <option value="GOLDEN CROSS">GOLDEN CROSS</option>
+                      <option value="GREEN LINE">GREEN LINE</option>
+                      <option value="INTERMEDICA">INTERMEDICA</option>
+                      <option value="ITAU">ITAU</option>
+                      <option value="NOTRE DAME">NOTRE DAME</option>
+                      <option value="MARITIMA">MARITIMA</option>
+                      <option value="MEDIAL">MEDIAL</option>
+                      <option value="MEDISERVICE">MEDISERVICE</option>
+                      <option value="METRUS">METRUS</option>
+                      <option value="OMINT">OMINT</option>
+                      <option value="ONE HEALTH">ONE HEALTH</option>
+                      <option value="PORTO SEGURO">PORTO SEGURO</option>
+                      <option value="POSTAL SAUDE">POSTAL SAUDE</option>
+                      <option value="SABESPREV">SABESPREV</option>
+                      <option value="SAUDE CAIXA">SAUDE CAIXA</option>
+                      <option value="SOMPO SAÚDE">SOMPO SAÚDE</option>
+                      <option value="TRASMONTANO">TRASMONTANO</option>
+                      <option value="UNIMED">UNIMED</option>
+                      <option value="UNIMED CENTRAL NACIONAL">UNIMED CENTRAL NACIONAL</option>
+                      <option value="UNIMED FESP">UNIMED FESP</option>
+                      <option value="UNIMED GUARULHOS">UNIMED GUARULHOS</option>
+                      <option value="UNIMED SEGUROS">UNIMED SEGUROS</option>
+                      <option value="VOLKSWAGEN">VOLKSWAGEN</option>
+                      <option value="OUTROS">OUTROS</option>
+                    </select>
                   ) : isEditing ? (
-                    <input
-                      type="text"
+                    <select
                       value={currentPatient.convenio || ''}
                       onChange={(e) => handleChange('convenio', e.target.value)}
                       aria-label="Convênio"
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    >
+                      <option value="">Selecione...</option>
+                      <option value="PARTICULAR">PARTICULAR</option>
+                      <option value="SULAMERICA">SULAMERICA</option>
+                      <option value="BRADESCO">BRADESCO</option>
+                      <option value="ABET">ABET</option>
+                      <option value="ALLIANZ">ALLIANZ</option>
+                      <option value="AMEPLAN">AMEPLAN</option>
+                      <option value="AMIL">AMIL</option>
+                      <option value="AMAFRESP">AMAFRESP</option>
+                      <option value="CABESP">CABESP</option>
+                      <option value="CARE PLUS">CARE PLUS</option>
+                      <option value="CASSI">CASSI</option>
+                      <option value="CET">CET</option>
+                      <option value="CLASSES LABORIOSAS">CLASSES LABORIOSAS</option>
+                      <option value="CUIDAR ME">CUIDAR ME</option>
+                      <option value="ECONOMUS">ECONOMUS</option>
+                      <option value="EMBRATEL">EMBRATEL</option>
+                      <option value="FUNDACAO CESP">FUNDACAO CESP</option>
+                      <option value="GAMA">GAMA</option>
+                      <option value="GEAP">GEAP</option>
+                      <option value="GOLDEN CROSS">GOLDEN CROSS</option>
+                      <option value="GREEN LINE">GREEN LINE</option>
+                      <option value="INTERMEDICA">INTERMEDICA</option>
+                      <option value="ITAU">ITAU</option>
+                      <option value="NOTRE DAME">NOTRE DAME</option>
+                      <option value="MARITIMA">MARITIMA</option>
+                      <option value="MEDIAL">MEDIAL</option>
+                      <option value="MEDISERVICE">MEDISERVICE</option>
+                      <option value="METRUS">METRUS</option>
+                      <option value="OMINT">OMINT</option>
+                      <option value="ONE HEALTH">ONE HEALTH</option>
+                      <option value="PORTO SEGURO">PORTO SEGURO</option>
+                      <option value="POSTAL SAUDE">POSTAL SAUDE</option>
+                      <option value="SABESPREV">SABESPREV</option>
+                      <option value="SAUDE CAIXA">SAUDE CAIXA</option>
+                      <option value="SOMPO SAÚDE">SOMPO SAÚDE</option>
+                      <option value="TRASMONTANO">TRASMONTANO</option>
+                      <option value="UNIMED">UNIMED</option>
+                      <option value="UNIMED CENTRAL NACIONAL">UNIMED CENTRAL NACIONAL</option>
+                      <option value="UNIMED FESP">UNIMED FESP</option>
+                      <option value="UNIMED GUARULHOS">UNIMED GUARULHOS</option>
+                      <option value="UNIMED SEGUROS">UNIMED SEGUROS</option>
+                      <option value="VOLKSWAGEN">VOLKSWAGEN</option>
+                      <option value="OUTROS">OUTROS</option>
+                    </select>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.convenio}
@@ -441,8 +731,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Subtipo Convênio */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   SUBTIPO CONVÊNIO
                 </label>
                 <div className="flex-1">
@@ -472,8 +762,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Resposta */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   RESPOSTA
                 </label>
                 <div className="flex-1">
@@ -511,8 +801,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Celular 1 */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   CEL 1
                 </label>
                 <div className="flex-1 flex gap-2">
@@ -554,8 +844,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Tel Fixo */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   TEL FIXO
                 </label>
                 <div className="flex-1">
@@ -586,8 +876,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Indicação */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   INDICAÇÃO
                 </label>
                 <div className="flex-1">
@@ -616,9 +906,150 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
+              {/* Data da Cirurgia */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  DATA DA CIRURGIA
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={currentPatient.dataCirurgia || ''}
+                      onChange={(e) => handleChange('dataCirurgia', e.target.value)}
+                      placeholder="DD/MM/AAAA"
+                      aria-label="Data da cirurgia"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.dataCirurgia || '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Profissão */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  PROFISSÃO
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={currentPatient.profissao || ''}
+                      onChange={(e) => handleChange('profissao', e.target.value)}
+                      placeholder="Profissão"
+                      aria-label="Profissão"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.profissao || '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sexo */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  SEXO
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <select
+                      value={currentPatient.sexo || ''}
+                      onChange={(e) => handleChange('sexo', e.target.value)}
+                      aria-label="Sexo"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Selecione...</option>
+                      <option value="MASCULINO">MASCULINO</option>
+                      <option value="FEMININO">FEMININO</option>
+                      <option value="OUTRO">OUTRO</option>
+                    </select>
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.sexo || '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Data de Nascimento */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  DATA DE NASCIMENTO
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={currentPatient.dataNascimento || ''}
+                      onChange={(e) => handleChange('dataNascimento', e.target.value)}
+                      placeholder="DD/MM/AAAA"
+                      aria-label="Data de nascimento"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.dataNascimento || '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Idade */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  IDADE
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      value={currentPatient.idade || ''}
+                      onChange={(e) => handleChange('idade', parseInt(e.target.value) || 0)}
+                      placeholder="Idade"
+                      aria-label="Idade"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.idade ? `${currentPatient.idade} anos` : '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  EMAIL
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      value={currentPatient.email || ''}
+                      onChange={(e) => handleChange('email', e.target.value)}
+                      placeholder="email@exemplo.com"
+                      aria-label="Email"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
+                      {currentPatient.email || '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Resolvido */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   RESOLVIDO
                 </label>
                 <div className="flex-1">
@@ -661,8 +1092,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Classificação */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   CLASSIFICAÇÃO
                 </label>
                 <div className="flex-1">
@@ -692,8 +1123,8 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* WhatsApp Checkboxes */}
-              <div className="flex items-center">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   WHATSAPP
                 </label>
                 <div className="flex-1 flex gap-4">
@@ -749,8 +1180,8 @@ export default function PatientFormFileMaker({
             </div>
 
             {/* Right Column - Recomendações */}
-            <div className="col-span-5">
-              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
+            <div className="lg:col-span-5">
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-3 sm:p-4">
                 <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
                   <FileText className="w-5 h-5" />
                   RECOMENDAÇÕES:

@@ -12,6 +12,12 @@ export type PatientDocument = Patient & Document;
       ret.nome = ret['NOME'];
       ret.ano = ret['ANO'];
       ret.dataConsulta = ret['DATA DA CONSULTA'];
+      ret.dataCirurgia = ret['DATA DA CIRURGIA'];
+      ret.profissao = ret['PROFISSÃO'];
+      ret.sexo = ret['SEXO'];
+      ret.dataNascimento = ret['DATA DE NASCIMENTO'];
+      ret.idade = ret['IDADE'];
+      ret.email = ret['EMAIL'];
       ret.convenio = ret['CONVÊNIO'];
       ret.subtipoConvenio = ret['SUBTIPO CONVÊNIO'];
       ret.resposta = ret['RESPOSTA'];
@@ -32,6 +38,12 @@ export type PatientDocument = Patient & Document;
       delete ret['NOME'];
       delete ret['ANO'];
       delete ret['DATA DA CONSULTA'];
+      delete ret['DATA DA CIRURGIA'];
+      delete ret['PROFISSÃO'];
+      delete ret['SEXO'];
+      delete ret['DATA DE NASCIMENTO'];
+      delete ret['IDADE'];
+      delete ret['EMAIL'];
       delete ret['CONVÊNIO'];
       delete ret['SUBTIPO CONVÊNIO'];
       delete ret['RESPOSTA'];
@@ -69,6 +81,24 @@ export class Patient {
 
   @Prop()
   'DATA DA CONSULTA': string;
+
+  @Prop()
+  'DATA DA CIRURGIA': string;
+
+  @Prop()
+  'PROFISSÃO': string;
+
+  @Prop()
+  'SEXO': string;
+
+  @Prop()
+  'DATA DE NASCIMENTO': string;
+
+  @Prop()
+  'IDADE': number;
+
+  @Prop()
+  'EMAIL': string;
 
   @Prop()
   'CONVÊNIO': string;

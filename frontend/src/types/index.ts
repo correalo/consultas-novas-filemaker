@@ -14,6 +14,12 @@ export interface Patient {
   nome: string;
   ano?: number;
   dataConsulta?: string;
+  dataCirurgia?: string;
+  profissao?: string;
+  sexo?: string;
+  dataNascimento?: string;
+  idade?: number;
+  email?: string;
   convenio?: string;
   subtipoConvenio?: string;
   resposta?: string;
