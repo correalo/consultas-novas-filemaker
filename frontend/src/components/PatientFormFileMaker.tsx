@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Patient } from '@/types';
 import { patientService } from '@/services/patientService';
-import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus } from 'lucide-react';
+import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus, Calendar } from 'lucide-react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
@@ -37,6 +37,50 @@ export default function PatientFormFileMaker({
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  
+  const dataCirurgiaInputRef = useRef<HTMLInputElement>(null);
+  const dataNascimentoInputRef = useRef<HTMLInputElement>(null);
+
+  // Funções para converter data BR (DD/MM/AAAA) para ISO (YYYY-MM-DD)
+  const convertBRtoISO = (brDate: string): string => {
+    if (!brDate) return '';
+    try {
+      const parts = brDate.split('/');
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+    } catch (err) {
+      console.log('Erro ao converter data BR para ISO');
+    }
+    return '';
+  };
+
+  const convertISOtoBR = (isoDate: string): string => {
+    if (!isoDate) return '';
+    try {
+      const [year, month, day] = isoDate.split('-');
+      return `${day}/${month}/${year}`;
+    } catch (err) {
+      console.log('Erro ao converter data ISO para BR');
+    }
+    return '';
+  };
+
+  const handleCalendarClick = (field: 'dataCirurgia' | 'dataNascimento') => {
+    if (field === 'dataCirurgia') {
+      dataCirurgiaInputRef.current?.showPicker();
+    } else {
+      dataNascimentoInputRef.current?.showPicker();
+    }
+  };
+
+  const handleDateInputChange = (field: 'dataCirurgia' | 'dataNascimento', isoDate: string) => {
+    if (isoDate) {
+      const brDate = convertISOtoBR(isoDate);
+      handleChange(field, brDate);
+    }
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -746,13 +790,246 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
                     />
                   ) : isEditing ? (
-                    <input
-                      type="text"
+                    <select
                       value={currentPatient.subtipoConvenio || ''}
                       onChange={(e) => handleChange('subtipoConvenio', e.target.value)}
                       aria-label="Subtipo do convênio"
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    >
+                      <option value="">Selecione...</option>
+                      <option value="AMIL 140 PLUS">AMIL 140 PLUS</option>
+                      <option value="AMIL 160">AMIL 160</option>
+                      <option value="AMIL BLUE I">AMIL BLUE I</option>
+                      <option value="AMIL BLUE II">AMIL BLUE II</option>
+                      <option value="AMIL GLOBAL I">AMIL GLOBAL I</option>
+                      <option value="AMIL 30">AMIL 30</option>
+                      <option value="AMIL 40">AMIL 40</option>
+                      <option value="AMIL 200">AMIL 200</option>
+                      <option value="AMIL 300">AMIL 300</option>
+                      <option value="AMIL 400">AMIL 400</option>
+                      <option value="AMIL 500">AMIL 500</option>
+                      <option value="AMIL 700">AMIL 700</option>
+                      <option value="AMIL BLUE GOLD">AMIL BLUE GOLD</option>
+                      <option value="AMIL FACIL S60 SP">AMIL FACIL S60 SP</option>
+                      <option value="AMIL COLABORADOR">AMIL COLABORADOR</option>
+                      <option value="AMIL ORIENTADOR 40">AMIL ORIENTADOR 40</option>
+                      <option value="AMIL ORIENTADOR 140">AMIL ORIENTADOR 140</option>
+                      <option value="AMIL NEXT MUN SAO PAULO">AMIL NEXT MUN SAO PAULO</option>
+                      <option value="AMIL QUALITE M22">AMIL QUALITE M22</option>
+                      <option value="AMIL ONE S1500">AMIL ONE S1500</option>
+                      <option value="AMIL ONE S2500">AMIL ONE S2500</option>
+                      <option value="AMIL OPCAO M22">AMIL OPCAO M22</option>
+                      <option value="AMIL SANTA PAULA">AMIL SANTA PAULA</option>
+                      <option value="AMIL S40">AMIL S40</option>
+                      <option value="AMIL S80">AMIL S80</option>
+                      <option value="AMIL S250">AMIL S250</option>
+                      <option value="AMIL S350">AMIL S350</option>
+                      <option value="AMIL S450">AMIL S450</option>
+                      <option value="AMIL S580">AMIL S580</option>
+                      <option value="AMIL S750">AMIL S750</option>
+                      <option value="ABSOLUTO">ABSOLUTO</option>
+                      <option value="ACESSO IV">ACESSO IV</option>
+                      <option value="ADVANCE 600">ADVANCE 600</option>
+                      <option value="ADVANCE 700">ADVANCE 700</option>
+                      <option value="ADVANCE 800">ADVANCE 800</option>
+                      <option value="AGREGADO">AGREGADO</option>
+                      <option value="AMPLA COLETIVO">AMPLA COLETIVO</option>
+                      <option value="ASSOCIADOS">ASSOCIADOS</option>
+                      <option value="ATIVOS">ATIVOS</option>
+                      <option value="BASICO">BASICO</option>
+                      <option value="BASICO 10">BASICO 10</option>
+                      <option value="BETA">BETA</option>
+                      <option value="BLUE III">BLUE III</option>
+                      <option value="BLUE IV">BLUE IV</option>
+                      <option value="BLUE 300">BLUE 300</option>
+                      <option value="BLUE 300 PLUS">BLUE 300 PLUS</option>
+                      <option value="BLUE 400">BLUE 400</option>
+                      <option value="BLUE 400 PLUS">BLUE 400 PLUS</option>
+                      <option value="BLUE 500">BLUE 500</option>
+                      <option value="BLUE 500 PLUS">BLUE 500 PLUS</option>
+                      <option value="BLUE 600">BLUE 600</option>
+                      <option value="BLUE 600 PLUS">BLUE 600 PLUS</option>
+                      <option value="BLUE 700">BLUE 700</option>
+                      <option value="BLUE 800">BLUE 800</option>
+                      <option value="BLUE EXECUTIVO">BLUE EXECUTIVO</option>
+                      <option value="BRANCO">BRANCO</option>
+                      <option value="BRANCO SL">BRANCO SL</option>
+                      <option value="BRANCO 100">BRANCO 100</option>
+                      <option value="BRANCO 150">BRANCO 150</option>
+                      <option value="BRONZE">BRONZE</option>
+                      <option value="BRONZE I">BRONZE I</option>
+                      <option value="BRONZE TOP">BRONZE TOP</option>
+                      <option value="CABESP FAMILIA">CABESP FAMILIA</option>
+                      <option value="CELEBRITY">CELEBRITY</option>
+                      <option value="CENTRAL NACIONAL">CENTRAL NACIONAL</option>
+                      <option value="CLASS 620 E">CLASS 620 E</option>
+                      <option value="CLASS 620 A">CLASS 620 A</option>
+                      <option value="CLASS 640 A">CLASS 640 A</option>
+                      <option value="CLASSICO">CLASSICO</option>
+                      <option value="COLETIVO EMPRESARIAL">COLETIVO EMPRESARIAL</option>
+                      <option value="COMPLETO">COMPLETO</option>
+                      <option value="CORPORATIVO COMPLETO">CORPORATIVO COMPLETO</option>
+                      <option value="CORREIOS SAUDE">CORREIOS SAUDE</option>
+                      <option value="CRISTAL I">CRISTAL I</option>
+                      <option value="D">D</option>
+                      <option value="DIAMANTE I">DIAMANTE I</option>
+                      <option value="DIAMANTE I 876">DIAMANTE I 876</option>
+                      <option value="DINAMICO">DINAMICO</option>
+                      <option value="DSP CLINIC">DSP CLINIC</option>
+                      <option value="DSP PLENA">DSP PLENA</option>
+                      <option value="DIX 10">DIX 10</option>
+                      <option value="DIX ORIENTADOR">DIX ORIENTADOR</option>
+                      <option value="DIX 100">DIX 100</option>
+                      <option value="EFETIVO IV">EFETIVO IV</option>
+                      <option value="ELETROPAULO">ELETROPAULO</option>
+                      <option value="ESSENCIAL">ESSENCIAL</option>
+                      <option value="ESSENCIAL PLUS">ESSENCIAL PLUS</option>
+                      <option value="ESPECIAL">ESPECIAL</option>
+                      <option value="ESPECIAL I">ESPECIAL I</option>
+                      <option value="ESPECIAL II">ESPECIAL II</option>
+                      <option value="ESPECIAL III">ESPECIAL III</option>
+                      <option value="ESPECIAL 100">ESPECIAL 100</option>
+                      <option value="ESTILO I">ESTILO I</option>
+                      <option value="ESTILO III">ESTILO III</option>
+                      <option value="ES07 ESPECIAL">ES07 ESPECIAL</option>
+                      <option value="EXATO">EXATO</option>
+                      <option value="EXCELLENCE">EXCELLENCE</option>
+                      <option value="EXECUTIVE">EXECUTIVE</option>
+                      <option value="EXECUTIVO">EXECUTIVO</option>
+                      <option value="EXCLUSIVO">EXCLUSIVO</option>
+                      <option value="FAMILIA">FAMILIA</option>
+                      <option value="FAMILA AGREGADO">FAMILA AGREGADO</option>
+                      <option value="FESP">FESP</option>
+                      <option value="FIT">FIT</option>
+                      <option value="FLEX">FLEX</option>
+                      <option value="GREEN 211">GREEN 211</option>
+                      <option value="H2L2R2ED">H2L2R2ED</option>
+                      <option value="H3L2">H3L2</option>
+                      <option value="IDEAL ENFERMARIA">IDEAL ENFERMARIA</option>
+                      <option value="INFINITY 1000">INFINITY 1000</option>
+                      <option value="INTEGRADA">INTEGRADA</option>
+                      <option value="LIDER">LIDER</option>
+                      <option value="LIFE STD">LIFE STD</option>
+                      <option value="LT3">LT3</option>
+                      <option value="LT4">LT4</option>
+                      <option value="MASTER">MASTER</option>
+                      <option value="MASTER I">MASTER I</option>
+                      <option value="MASTER II">MASTER II</option>
+                      <option value="MASTER III">MASTER III</option>
+                      <option value="MASTER IV">MASTER IV</option>
+                      <option value="MAX 250">MAX 250</option>
+                      <option value="MAX 300">MAX 300</option>
+                      <option value="MAX 350">MAX 350</option>
+                      <option value="MAX 400">MAX 400</option>
+                      <option value="MAXI">MAXI</option>
+                      <option value="MAXIMO">MAXIMO</option>
+                      <option value="MEDIAL 200">MEDIAL 200</option>
+                      <option value="MEDIAL CLASS 620">MEDIAL CLASS 620</option>
+                      <option value="MEDIAL 31">MEDIAL 31</option>
+                      <option value="MEDIAL 400">MEDIAL 400</option>
+                      <option value="MEDIAL 840 A">MEDIAL 840 A</option>
+                      <option value="MEDIAL ESTRELAS 31">MEDIAL ESTRELAS 31</option>
+                      <option value="MEDIAL EXECUTIVE PLUS">MEDIAL EXECUTIVE PLUS</option>
+                      <option value="MEDIAL INTER II NAC PJCE">MEDIAL INTER II NAC PJCE</option>
+                      <option value="MEDIAL GOL">MEDIAL GOL</option>
+                      <option value="MEDIAL IDEAL 420 A">MEDIAL IDEAL 420 A</option>
+                      <option value="MEDIAL ORIENTADOR CLASS 30">MEDIAL ORIENTADOR CLASS 30</option>
+                      <option value="MEDIAL PLENO II">MEDIAL PLENO II</option>
+                      <option value="MEDIAL PREMIUM 840A">MEDIAL PREMIUM 840A</option>
+                      <option value="MEDICUS M22">MEDICUS M22</option>
+                      <option value="MEDICUS 122">MEDICUS 122</option>
+                      <option value="MELHOR">MELHOR</option>
+                      <option value="MSI">MSI</option>
+                      <option value="NDS 111">NDS 111</option>
+                      <option value="NDS 126">NDS 126</option>
+                      <option value="NDS 127">NDS 127</option>
+                      <option value="NDS 130">NDS 130</option>
+                      <option value="NDS 140">NDS 140</option>
+                      <option value="NDS 141">NDS 141</option>
+                      <option value="NDS 161">NDS 161</option>
+                      <option value="ONE BLACK T2">ONE BLACK T2</option>
+                      <option value="ONE BLACK T3">ONE BLACK T3</option>
+                      <option value="ONE 2000">ONE 2000</option>
+                      <option value="OPCAO M22">OPCAO M22</option>
+                      <option value="OPCAO 122">OPCAO 122</option>
+                      <option value="ORIGINAL">ORIGINAL</option>
+                      <option value="OSWALDO CRUZ 100">OSWALDO CRUZ 100</option>
+                      <option value="OURO">OURO</option>
+                      <option value="OURO I">OURO I</option>
+                      <option value="OURO III">OURO III</option>
+                      <option value="OURO IV">OURO IV</option>
+                      <option value="OURO MAIS Q">OURO MAIS Q</option>
+                      <option value="OURO MAX Q">OURO MAX Q</option>
+                      <option value="PADRAO">PADRAO</option>
+                      <option value="PLENO">PLENO</option>
+                      <option value="PLENO II 920">PLENO II 920</option>
+                      <option value="PLUS">PLUS</option>
+                      <option value="PME COMPACTO">PME COMPACTO</option>
+                      <option value="PORTO MED I">PORTO MED I</option>
+                      <option value="PRATA">PRATA</option>
+                      <option value="PRATA BRONZE COPAR Q">PRATA BRONZE COPAR Q</option>
+                      <option value="PRATA E MAIS">PRATA E MAIS</option>
+                      <option value="PRATA MAIS Q">PRATA MAIS Q</option>
+                      <option value="PRATA I">PRATA I</option>
+                      <option value="PRATA TOP">PRATA TOP</option>
+                      <option value="PREMIUM">PREMIUM</option>
+                      <option value="PREMIUM TOP">PREMIUM TOP</option>
+                      <option value="PREMIUM 800">PREMIUM 800</option>
+                      <option value="PREMIUM 900">PREMIUM 900</option>
+                      <option value="QUALITE">QUALITE</option>
+                      <option value="REDE 300">REDE 300</option>
+                      <option value="REFE EFETIVO">REFE EFETIVO</option>
+                      <option value="REDE EFETIVO III">REDE EFETIVO III</option>
+                      <option value="REDE EFETIVO IV">REDE EFETIVO IV</option>
+                      <option value="REDE HSC IDEAL">REDE HSC IDEAL</option>
+                      <option value="REDE HSC NACIONAL">REDE HSC NACIONAL</option>
+                      <option value="REDE IDEAL I">REDE IDEAL I</option>
+                      <option value="REDE LIVRE ESCOLHA">REDE LIVRE ESCOLHA</option>
+                      <option value="REDE PERFIL SP">REDE PERFIL SP</option>
+                      <option value="REDE PERSONAL IV">REDE PERSONAL IV</option>
+                      <option value="REDE PREFERENCIAL">REDE PREFERENCIAL</option>
+                      <option value="REDE PREFERENCIAL PLUS">REDE PREFERENCIAL PLUS</option>
+                      <option value="REDE INTERNACIONAL">REDE INTERNACIONAL</option>
+                      <option value="REDE NACIONAL INDIVIDUAL">REDE NACIONAL INDIVIDUAL</option>
+                      <option value="REDE NACIONAL EMPRESARIAL">REDE NACIONAL EMPRESARIAL</option>
+                      <option value="REDE NACIONAL EMPRESARIAL SPG">REDE NACIONAL EMPRESARIAL SPG</option>
+                      <option value="REDE NACIONAL ESPECIAL">REDE NACIONAL ESPECIAL</option>
+                      <option value="REDE NACIONAL FLEX">REDE NACIONAL FLEX</option>
+                      <option value="REDE NACIONAL FLEX II">REDE NACIONAL FLEX II</option>
+                      <option value="REDE NACIONAL PLUS">REDE NACIONAL PLUS</option>
+                      <option value="REDE PERSONAL VI">REDE PERSONAL VI</option>
+                      <option value="REDE SCANIA">REDE SCANIA</option>
+                      <option value="REDE SIEMENS">REDE SIEMENS</option>
+                      <option value="REGIONAL">REGIONAL</option>
+                      <option value="SAUDE CAIXA ATIVOS">SAUDE CAIXA ATIVOS</option>
+                      <option value="SEGUROS UNIMED HCOR">SEGUROS UNIMED HCOR</option>
+                      <option value="SELETO I">SELETO I</option>
+                      <option value="SENIOR I">SENIOR I</option>
+                      <option value="SENIOR II 920">SENIOR II 920</option>
+                      <option value="SKILL">SKILL</option>
+                      <option value="SMART 200">SMART 200</option>
+                      <option value="SMART 300">SMART 300</option>
+                      <option value="SMART 400">SMART 400</option>
+                      <option value="SMART 500">SMART 500</option>
+                      <option value="SMART 600">SMART 600</option>
+                      <option value="STANDARD">STANDARD</option>
+                      <option value="SUPERIEUR">SUPERIEUR</option>
+                      <option value="SUPERIOR NACIONAL">SUPERIOR NACIONAL</option>
+                      <option value="SUPREMO">SUPREMO</option>
+                      <option value="S 450">S 450</option>
+                      <option value="S 750">S 750</option>
+                      <option value="UNIPLAN INTEGRADA">UNIPLAN INTEGRADA</option>
+                      <option value="UNIPLAN PADRÃO">UNIPLAN PADRÃO</option>
+                      <option value="UNIPLAN SUPREMO">UNIPLAN SUPREMO</option>
+                      <option value="UNIPLAN UP OURO">UNIPLAN UP OURO</option>
+                      <option value="UNIPLAN UP BRONZE">UNIPLAN UP BRONZE</option>
+                      <option value="UNIPLAN">UNIPLAN</option>
+                      <option value="UNIPLAN NEW PRATA">UNIPLAN NEW PRATA</option>
+                      <option value="VERSATIL">VERSATIL</option>
+                      <option value="VITA">VITA</option>
+                      <option value="UNIPLAN ESPECIAL">UNIPLAN ESPECIAL</option>
+                      <option value="UNIPLAN MASTERAMIL">UNIPLAN MASTERAMIL</option>
+                    </select>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.subtipoConvenio}
@@ -913,14 +1190,36 @@ export default function PatientFormFileMaker({
                 </label>
                 <div className="flex-1">
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentPatient.dataCirurgia || ''}
-                      onChange={(e) => handleChange('dataCirurgia', e.target.value)}
-                      placeholder="DD/MM/AAAA"
-                      aria-label="Data da cirurgia"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={currentPatient.dataCirurgia || ''}
+                        onChange={(e) => handleChange('dataCirurgia', e.target.value)}
+                        placeholder="DD/MM/AAAA"
+                        maxLength={10}
+                        aria-label="Data da cirurgia"
+                        className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => handleCalendarClick('dataCirurgia')}
+                          className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
+                          title="Escolher data"
+                        >
+                          <Calendar className="w-5 h-5 text-gray-600" />
+                        </button>
+                        <input
+                          ref={dataCirurgiaInputRef}
+                          type="date"
+                          value={convertBRtoISO(currentPatient.dataCirurgia || '')}
+                          onChange={(e) => handleDateInputChange('dataCirurgia', e.target.value)}
+                          className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
+                          tabIndex={-1}
+                          aria-label="Seletor de data da cirurgia"
+                        />
+                      </div>
+                    </div>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
                       {currentPatient.dataCirurgia || '\u00A0'}
@@ -985,14 +1284,36 @@ export default function PatientFormFileMaker({
                 </label>
                 <div className="flex-1">
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentPatient.dataNascimento || ''}
-                      onChange={(e) => handleChange('dataNascimento', e.target.value)}
-                      placeholder="DD/MM/AAAA"
-                      aria-label="Data de nascimento"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={currentPatient.dataNascimento || ''}
+                        onChange={(e) => handleChange('dataNascimento', e.target.value)}
+                        placeholder="DD/MM/AAAA"
+                        maxLength={10}
+                        aria-label="Data de nascimento"
+                        className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => handleCalendarClick('dataNascimento')}
+                          className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
+                          title="Escolher data"
+                        >
+                          <Calendar className="w-5 h-5 text-gray-600" />
+                        </button>
+                        <input
+                          ref={dataNascimentoInputRef}
+                          type="date"
+                          value={convertBRtoISO(currentPatient.dataNascimento || '')}
+                          onChange={(e) => handleDateInputChange('dataNascimento', e.target.value)}
+                          className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
+                          tabIndex={-1}
+                          aria-label="Seletor de data de nascimento"
+                        />
+                      </div>
+                    </div>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
                       {currentPatient.dataNascimento || '\u00A0'}
