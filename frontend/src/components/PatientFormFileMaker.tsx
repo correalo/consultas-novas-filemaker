@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Patient } from '@/types';
 import { patientService } from '@/services/patientService';
 import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus, Calendar } from 'lucide-react';
@@ -38,47 +38,39 @@ export default function PatientFormFileMaker({
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   
-  const dataCirurgiaInputRef = useRef<HTMLInputElement>(null);
-  const dataNascimentoInputRef = useRef<HTMLInputElement>(null);
-
-  // Funções para converter data BR (DD/MM/AAAA) para ISO (YYYY-MM-DD)
-  const convertBRtoISO = (brDate: string): string => {
-    if (!brDate) return '';
+  // Refs para os inputs de data ocultos
+  const dateInputRefs = {
+    dataNascimento: useRef<HTMLInputElement>(null),
+    dataConsulta: useRef<HTMLInputElement>(null),
+    dataCirurgia: useRef<HTMLInputElement>(null),
+  };
+  
+  // Função para calcular idade a partir da data de nascimento
+  const calculateAge = (birthDate: string): number => {
+    if (!birthDate || birthDate.length !== 10) return 0;
+    
     try {
-      const parts = brDate.split('/');
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      const parts = birthDate.split('/');
+      if (parts.length !== 3) return 0;
+      
+      const [day, month, year] = parts.map(p => parseInt(p, 10));
+      if (!day || !month || !year) return 0;
+      
+      const birth = new Date(year, month - 1, day);
+      const today = new Date();
+      
+      let age = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+      
+      // Ajustar se ainda não fez aniversário este ano
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
       }
-    } catch (err) {
-      console.log('Erro ao converter data BR para ISO');
-    }
-    return '';
-  };
-
-  const convertISOtoBR = (isoDate: string): string => {
-    if (!isoDate) return '';
-    try {
-      const [year, month, day] = isoDate.split('-');
-      return `${day}/${month}/${year}`;
-    } catch (err) {
-      console.log('Erro ao converter data ISO para BR');
-    }
-    return '';
-  };
-
-  const handleCalendarClick = (field: 'dataCirurgia' | 'dataNascimento') => {
-    if (field === 'dataCirurgia') {
-      dataCirurgiaInputRef.current?.showPicker();
-    } else {
-      dataNascimentoInputRef.current?.showPicker();
-    }
-  };
-
-  const handleDateInputChange = (field: 'dataCirurgia' | 'dataNascimento', isoDate: string) => {
-    if (isoDate) {
-      const brDate = convertISOtoBR(isoDate);
-      handleChange(field, brDate);
+      
+      return age >= 0 ? age : 0;
+    } catch (e) {
+      console.log('Erro ao calcular idade:', e);
+      return 0;
     }
   };
 
@@ -226,6 +218,16 @@ export default function PatientFormFileMaker({
   };
 
   const currentPatient = isEditing ? editedPatient : patient;
+
+  // Calcular idade automaticamente quando a data de nascimento mudar
+  useEffect(() => {
+    if (isEditing && editedPatient.dataNascimento) {
+      const calculatedAge = calculateAge(editedPatient.dataNascimento);
+      if (calculatedAge > 0 && calculatedAge !== editedPatient.idade) {
+        setEditedPatient(prev => ({ ...prev, idade: calculatedAge }));
+      }
+    }
+  }, [editedPatient.dataNascimento, isEditing]);
 
   const handleWhatsApp = () => {
     if (currentPatient.celular) {
@@ -554,6 +556,135 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
+              {/* Data de Nascimento */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  DATA DE NASCIMENTO
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={currentPatient.dataNascimento || ''}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          
+                          // Permitir deletar livremente
+                          if (value.length < (currentPatient.dataNascimento || '').length) {
+                            handleChange('dataNascimento', value);
+                            return;
+                          }
+                          
+                          // Aplicar máscara apenas ao adicionar caracteres
+                          const numbers = value.replace(/\D/g, '');
+                          let masked = '';
+                          
+                          if (numbers.length > 0) {
+                            masked = numbers.slice(0, 2);
+                            if (numbers.length >= 3) {
+                              masked += '/' + numbers.slice(2, 4);
+                            }
+                            if (numbers.length >= 5) {
+                              masked += '/' + numbers.slice(4, 8);
+                            }
+                          }
+                          
+                          handleChange('dataNascimento', masked);
+                        }}
+                        placeholder="DD/MM/AAAA"
+                        maxLength={10}
+                        aria-label="Data de nascimento"
+                        className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            dateInputRefs.dataNascimento.current?.showPicker();
+                          }}
+                          className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
+                          title="Escolher data"
+                        >
+                          <Calendar className="w-5 h-5 text-gray-600" />
+                        </button>
+                        <input
+                          ref={dateInputRefs.dataNascimento}
+                          type="date"
+                          value={(() => {
+                            if (!currentPatient.dataNascimento) return '';
+                            try {
+                              const parts = currentPatient.dataNascimento.split('/');
+                              if (parts.length === 3) {
+                                const [day, month, year] = parts;
+                                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                              }
+                            } catch (e) {
+                              console.log('Erro ao converter data');
+                            }
+                            return '';
+                          })()}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const [year, month, day] = e.target.value.split('-');
+                              const brDate = `${day}/${month}/${year}`;
+                              handleChange('dataNascimento', brDate);
+                            }
+                          }}
+                          className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
+                          tabIndex={-1}
+                          aria-label="Seletor de data de nascimento"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.dataNascimento || '\u00A0'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Idade */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  IDADE
+                </label>
+                <div className="flex-1">
+                  <div className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded min-h-[34px] flex items-center">
+                    {currentPatient.idade ? `${currentPatient.idade} anos` : '\u00A0'}
+                    {isEditing && currentPatient.dataNascimento && (
+                      <span className="ml-2 text-xs text-gray-500 italic">(calculado automaticamente)</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sexo */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  SEXO
+                </label>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <select
+                      value={currentPatient.sexo || ''}
+                      onChange={(e) => handleChange('sexo', e.target.value)}
+                      aria-label="Sexo"
+                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Selecione...</option>
+                      <option value="M">M</option>
+                      <option value="F">F</option>
+                    </select>
+                  ) : (
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                      {currentPatient.sexo || '\u00A0'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Data da Consulta */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
@@ -597,14 +728,28 @@ export default function PatientFormFileMaker({
                         type="text"
                         value={currentPatient.dataConsulta || ''}
                         onChange={(e) => {
-                          const numbers = e.target.value.replace(/\D/g, '');
-                          let masked = numbers;
-                          if (numbers.length >= 2) {
-                            masked = numbers.slice(0, 2) + '/' + numbers.slice(2);
+                          let value = e.target.value;
+                          
+                          // Permitir deletar livremente
+                          if (value.length < (currentPatient.dataConsulta || '').length) {
+                            handleChange('dataConsulta', value);
+                            return;
                           }
-                          if (numbers.length >= 4) {
-                            masked = numbers.slice(0, 2) + '/' + numbers.slice(2, 4) + '/' + numbers.slice(4, 8);
+                          
+                          // Aplicar máscara apenas ao adicionar caracteres
+                          const numbers = value.replace(/\D/g, '');
+                          let masked = '';
+                          
+                          if (numbers.length > 0) {
+                            masked = numbers.slice(0, 2);
+                            if (numbers.length >= 3) {
+                              masked += '/' + numbers.slice(2, 4);
+                            }
+                            if (numbers.length >= 5) {
+                              masked += '/' + numbers.slice(4, 8);
+                            }
                           }
+                          
                           handleChange('dataConsulta', masked);
                         }}
                         placeholder="DD/MM/AAAA"
@@ -612,41 +757,45 @@ export default function PatientFormFileMaker({
                         aria-label="Data da consulta"
                         className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'date';
-                          
-                          // Converter data atual para formato YYYY-MM-DD se existir
-                          if (currentPatient.dataConsulta) {
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            dateInputRefs.dataConsulta.current?.showPicker();
+                          }}
+                          className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
+                          title="Escolher data"
+                        >
+                          <Calendar className="w-5 h-5 text-gray-600" />
+                        </button>
+                        <input
+                          ref={dateInputRefs.dataConsulta}
+                          type="date"
+                          value={(() => {
+                            if (!currentPatient.dataConsulta) return '';
                             try {
                               const parts = currentPatient.dataConsulta.split('/');
                               if (parts.length === 3) {
                                 const [day, month, year] = parts;
-                                input.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                               }
                             } catch (e) {
                               console.log('Erro ao converter data');
                             }
-                          }
-                          
-                          input.onchange = (e) => {
-                            const target = e.target as HTMLInputElement;
-                            if (target.value) {
-                              const [year, month, day] = target.value.split('-');
+                            return '';
+                          })()}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const [year, month, day] = e.target.value.split('-');
                               const brDate = `${day}/${month}/${year}`;
                               handleChange('dataConsulta', brDate);
                             }
-                          };
-                          
-                          input.click();
-                        }}
-                        className="px-3 py-1.5 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300"
-                        aria-label="Escolher data"
-                      >
-                        📅
-                      </button>
+                          }}
+                          className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
+                          tabIndex={-1}
+                          aria-label="Seletor de data da consulta"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
@@ -1190,11 +1339,35 @@ export default function PatientFormFileMaker({
                 </label>
                 <div className="flex-1">
                   {isEditing ? (
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={currentPatient.dataCirurgia || ''}
-                        onChange={(e) => handleChange('dataCirurgia', e.target.value)}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          
+                          // Permitir deletar livremente
+                          if (value.length < (currentPatient.dataCirurgia || '').length) {
+                            handleChange('dataCirurgia', value);
+                            return;
+                          }
+                          
+                          // Aplicar máscara apenas ao adicionar caracteres
+                          const numbers = value.replace(/\D/g, '');
+                          let masked = '';
+                          
+                          if (numbers.length > 0) {
+                            masked = numbers.slice(0, 2);
+                            if (numbers.length >= 3) {
+                              masked += '/' + numbers.slice(2, 4);
+                            }
+                            if (numbers.length >= 5) {
+                              masked += '/' + numbers.slice(4, 8);
+                            }
+                          }
+                          
+                          handleChange('dataCirurgia', masked);
+                        }}
                         placeholder="DD/MM/AAAA"
                         maxLength={10}
                         aria-label="Data da cirurgia"
@@ -1203,17 +1376,37 @@ export default function PatientFormFileMaker({
                       <div className="relative">
                         <button
                           type="button"
-                          onClick={() => handleCalendarClick('dataCirurgia')}
+                          onClick={() => {
+                            dateInputRefs.dataCirurgia.current?.showPicker();
+                          }}
                           className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
                           title="Escolher data"
                         >
                           <Calendar className="w-5 h-5 text-gray-600" />
                         </button>
                         <input
-                          ref={dataCirurgiaInputRef}
+                          ref={dateInputRefs.dataCirurgia}
                           type="date"
-                          value={convertBRtoISO(currentPatient.dataCirurgia || '')}
-                          onChange={(e) => handleDateInputChange('dataCirurgia', e.target.value)}
+                          value={(() => {
+                            if (!currentPatient.dataCirurgia) return '';
+                            try {
+                              const parts = currentPatient.dataCirurgia.split('/');
+                              if (parts.length === 3) {
+                                const [day, month, year] = parts;
+                                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                              }
+                            } catch (e) {
+                              console.log('Erro ao converter data');
+                            }
+                            return '';
+                          })()}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const [year, month, day] = e.target.value.split('-');
+                              const brDate = `${day}/${month}/${year}`;
+                              handleChange('dataCirurgia', brDate);
+                            }
+                          }}
                           className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
                           tabIndex={-1}
                           aria-label="Seletor de data da cirurgia"
@@ -1246,100 +1439,6 @@ export default function PatientFormFileMaker({
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
                       {currentPatient.profissao || '\u00A0'}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Sexo */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  SEXO
-                </label>
-                <div className="flex-1">
-                  {isEditing ? (
-                    <select
-                      value={currentPatient.sexo || ''}
-                      onChange={(e) => handleChange('sexo', e.target.value)}
-                      aria-label="Sexo"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="MASCULINO">MASCULINO</option>
-                      <option value="FEMININO">FEMININO</option>
-                      <option value="OUTRO">OUTRO</option>
-                    </select>
-                  ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
-                      {currentPatient.sexo || '\u00A0'}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Data de Nascimento */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  DATA DE NASCIMENTO
-                </label>
-                <div className="flex-1">
-                  {isEditing ? (
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={currentPatient.dataNascimento || ''}
-                        onChange={(e) => handleChange('dataNascimento', e.target.value)}
-                        placeholder="DD/MM/AAAA"
-                        maxLength={10}
-                        aria-label="Data de nascimento"
-                        className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => handleCalendarClick('dataNascimento')}
-                          className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300 flex items-center justify-center"
-                          title="Escolher data"
-                        >
-                          <Calendar className="w-5 h-5 text-gray-600" />
-                        </button>
-                        <input
-                          ref={dataNascimentoInputRef}
-                          type="date"
-                          value={convertBRtoISO(currentPatient.dataNascimento || '')}
-                          onChange={(e) => handleDateInputChange('dataNascimento', e.target.value)}
-                          className="absolute top-0 left-0 opacity-0 pointer-events-none w-full h-full"
-                          tabIndex={-1}
-                          aria-label="Seletor de data de nascimento"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
-                      {currentPatient.dataNascimento || '\u00A0'}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Idade */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  IDADE
-                </label>
-                <div className="flex-1">
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={currentPatient.idade || ''}
-                      onChange={(e) => handleChange('idade', parseInt(e.target.value) || 0)}
-                      placeholder="Idade"
-                      aria-label="Idade"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
-                      {currentPatient.idade ? `${currentPatient.idade} anos` : '\u00A0'}
                     </div>
                   )}
                 </div>

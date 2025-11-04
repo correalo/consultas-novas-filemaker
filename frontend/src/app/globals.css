@@ -10,6 +10,13 @@
     @apply bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900;
     min-height: 100vh;
   }
+  
+  /* Restaurar aparência nativa dos selects */
+  select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+  }
 }
 
 @layer utilities {
