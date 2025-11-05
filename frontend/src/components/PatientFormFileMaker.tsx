@@ -7,6 +7,15 @@ import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, Ref
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
+interface ToDo {
+  id: string;
+  nome: string;
+  data: string;
+  acao: string;
+  finalidade: string;
+  resolvido: string;
+}
+
 interface PatientFormFileMakerProps {
   patient: Patient;
   allPatients?: Patient[];
@@ -37,6 +46,14 @@ export default function PatientFormFileMaker({
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [todos, setTodos] = useState<ToDo[]>([]);
+  const [newTodo, setNewTodo] = useState<Partial<ToDo>>({
+    nome: patient.nome || '',
+    data: '',
+    acao: '',
+    finalidade: '',
+    resolvido: ''
+  });
   
   // Refs para os inputs de data ocultos
   const dateInputRefs = {
@@ -45,6 +62,24 @@ export default function PatientFormFileMaker({
     dataCirurgia: useRef<HTMLInputElement>(null),
   };
   
+  // Função para aplicar máscara de celular (00) 00000-0000
+  const maskCelular = (value: string): string => {
+    if (!value) return '';
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 2) return `(${numbers}`;
+    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  // Função para aplicar máscara de telefone fixo (00) 0000-0000
+  const maskTelFixo = (value: string): string => {
+    if (!value) return '';
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 2) return `(${numbers}`;
+    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6, 10)}`;
+  };
+
   // Função para calcular idade a partir da data de nascimento
   const calculateAge = (birthDate: string): number => {
     if (!birthDate || birthDate.length !== 10) return 0;
@@ -234,6 +269,35 @@ export default function PatientFormFileMaker({
       const phone = currentPatient.celular.replace(/\D/g, '');
       window.open(`https://wa.me/55${phone}`, '_blank');
     }
+  };
+
+  const handleAddTodo = () => {
+    if (!newTodo.data || !newTodo.acao) {
+      alert('Preencha pelo menos a Data e a Ação');
+      return;
+    }
+    
+    const todo: ToDo = {
+      id: Date.now().toString(),
+      nome: newTodo.nome || currentPatient.nome || '',
+      data: newTodo.data || '',
+      acao: newTodo.acao || '',
+      finalidade: newTodo.finalidade || '',
+      resolvido: newTodo.resolvido || ''
+    };
+    
+    setTodos([...todos, todo]);
+    setNewTodo({
+      nome: currentPatient.nome || '',
+      data: '',
+      acao: '',
+      finalidade: '',
+      resolvido: ''
+    });
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    setTodos(todos.filter(t => t.id !== id));
   };
 
   const handleEmail = () => {
@@ -1244,10 +1308,14 @@ export default function PatientFormFileMaker({
                   ) : isEditing ? (
                     <input
                       type="text"
-                      value={currentPatient.celular || ''}
-                      onChange={(e) => handleChange('celular', e.target.value)}
+                      value={maskCelular(currentPatient.celular || '')}
+                      onChange={(e) => {
+                        const masked = maskCelular(e.target.value);
+                        handleChange('celular', masked);
+                      }}
                       placeholder="(00) 00000-0000"
                       aria-label="Celular"
+                      maxLength={15}
                       className="flex-1 px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
@@ -1287,10 +1355,14 @@ export default function PatientFormFileMaker({
                   ) : isEditing ? (
                     <input
                       type="text"
-                      value={currentPatient.telFixo || ''}
-                      onChange={(e) => handleChange('telFixo', e.target.value)}
+                      value={maskTelFixo(currentPatient.telFixo || '')}
+                      onChange={(e) => {
+                        const masked = maskTelFixo(e.target.value);
+                        handleChange('telFixo', masked);
+                      }}
                       placeholder="(00) 0000-0000"
                       aria-label="Telefone fixo"
+                      maxLength={14}
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
@@ -1646,6 +1718,148 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Portal ToDo's - Seção inferior */}
+          <div className="mt-6 bg-gradient-to-b from-gray-100 to-gray-200 border-2 border-gray-400 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-sm">
+                ToDo's
+              </div>
+              <h3 className="font-bold text-gray-800">Tarefas do Paciente</h3>
+            </div>
+
+            {/* Formulário de novo ToDo */}
+            <div className="bg-white border-2 border-gray-300 rounded-lg p-3 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">NOME ToDo's</label>
+                  <input
+                    type="text"
+                    value={newTodo.nome || ''}
+                    onChange={(e) => setNewTodo({ ...newTodo, nome: e.target.value })}
+                    className="w-full px-2 py-1.5 border border-gray-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nome do paciente"
+                  />
+                </div>
+                
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">DATA ToDo's</label>
+                  <input
+                    type="date"
+                    value={newTodo.data || ''}
+                    onChange={(e) => setNewTodo({ ...newTodo, data: e.target.value })}
+                    aria-label="Data da tarefa"
+                    className="w-full px-2 py-1.5 border border-gray-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">AÇÃO ToDo's</label>
+                  <select
+                    value={newTodo.acao || ''}
+                    onChange={(e) => setNewTodo({ ...newTodo, acao: e.target.value })}
+                    aria-label="Ação da tarefa"
+                    className="w-full px-2 py-1.5 border border-gray-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="Ligar">Ligar</option>
+                    <option value="Email">Email</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="SMS">SMS</option>
+                    <option value="Consulta">Consulta</option>
+                    <option value="Retorno">Retorno</option>
+                  </select>
+                </div>
+                
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">FINALIDADE ToDo's</label>
+                  <input
+                    type="text"
+                    value={newTodo.finalidade || ''}
+                    onChange={(e) => setNewTodo({ ...newTodo, finalidade: e.target.value })}
+                    className="w-full px-2 py-1.5 border border-gray-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Finalidade"
+                  />
+                </div>
+                
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">RESOLVIDO ToDo's</label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="checkbox"
+                      checked={newTodo.resolvido === 'Sim'}
+                      onChange={(e) => setNewTodo({ ...newTodo, resolvido: e.target.checked ? 'Sim' : 'Não' })}
+                      aria-label="Tarefa resolvida"
+                      className="w-5 h-5 border-2 border-gray-400 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleAddTodo}
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded font-bold text-sm flex items-center justify-center gap-1"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Adicionar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lista de ToDos */}
+            {todos.length > 0 && (
+              <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-b from-blue-100 to-blue-200 border-b-2 border-gray-300">
+                    <tr>
+                      <th className="px-3 py-2 text-left font-bold text-gray-800 border-r border-gray-300">NOME</th>
+                      <th className="px-3 py-2 text-left font-bold text-gray-800 border-r border-gray-300">DATA</th>
+                      <th className="px-3 py-2 text-left font-bold text-gray-800 border-r border-gray-300">AÇÃO</th>
+                      <th className="px-3 py-2 text-left font-bold text-gray-800 border-r border-gray-300">FINALIDADE</th>
+                      <th className="px-3 py-2 text-left font-bold text-gray-800 border-r border-gray-300">RESOLVIDO</th>
+                      <th className="px-3 py-2 text-center font-bold text-gray-800">AÇÕES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {todos.map((todo, index) => (
+                      <tr key={todo.id} className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="px-3 py-2 border-r border-gray-200">{todo.nome}</td>
+                        <td className="px-3 py-2 border-r border-gray-200">
+                          {todo.data ? new Date(todo.data).toLocaleDateString('pt-BR') : ''}
+                        </td>
+                        <td className="px-3 py-2 border-r border-gray-200">{todo.acao}</td>
+                        <td className="px-3 py-2 border-r border-gray-200">{todo.finalidade}</td>
+                        <td className="px-3 py-2 border-r border-gray-200">
+                          <span className={`px-2 py-1 rounded text-xs font-bold ${
+                            todo.resolvido === 'Sim' 
+                              ? 'bg-green-200 text-green-800' 
+                              : 'bg-yellow-200 text-yellow-800'
+                          }`}>
+                            {todo.resolvido || 'Não'}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-center">
+                          <button
+                            onClick={() => handleDeleteTodo(todo.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1 mx-auto"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            Excluir
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {todos.length === 0 && (
+              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500 font-semibold">Nenhuma tarefa cadastrada</p>
+                <p className="text-gray-400 text-sm">Adicione tarefas usando o formulário acima</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
