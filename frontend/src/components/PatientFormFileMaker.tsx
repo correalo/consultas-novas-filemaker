@@ -573,7 +573,7 @@ export default function PatientFormFileMaker({
           <FileText className="w-5 h-5 text-blue-700" />
           <span className="font-bold text-blue-900 text-sm sm:text-base">RECOMENDAÇÃO:</span>
           <span className="text-sm sm:text-base text-gray-800">
-            PERGUNTAR SEMPRE <span className="font-bold text-blue-900">NOME, CELULAR E CONVÊNIO</span> AO MARCAR A CIRURGIA
+            PERGUNTAR SEMPRE <span className="font-bold text-blue-900">NOME, CELULAR E CONVÊNIO</span> AO MARCAR A CONSULTA
           </span>
         </div>
       </div>
