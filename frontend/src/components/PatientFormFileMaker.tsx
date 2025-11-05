@@ -585,8 +585,8 @@ export default function PatientFormFileMaker({
           <div className="grid grid-cols-1 gap-4">
             {/* Main Column */}
             <div className="space-y-3 sm:space-y-4">
-              {/* Primeira Linha: Nome, Data de Nascimento, Idade */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Primeira Linha: Nome, Data de Nascimento */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Nome */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
@@ -721,7 +721,10 @@ export default function PatientFormFileMaker({
                   )}
                   </div>
                 </div>
+              </div>
 
+              {/* Segunda Linha: Idade, Sexo */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Idade */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
@@ -736,10 +739,7 @@ export default function PatientFormFileMaker({
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Segunda Linha: Sexo, Data Consulta, Convênio */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Sexo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-16 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
@@ -1004,8 +1004,8 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
-              {/* Terceira Linha: Subtipo, Resposta, Celular */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Terceira Linha: Data Consulta, Convênio */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Subtipo Convênio */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
@@ -1357,8 +1357,8 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
-              {/* Quarta Linha: Tel Fixo, Indicação, Data Cirurgia */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Quarta Linha: Subtipo, Resposta */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Tel Fixo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
@@ -1516,8 +1516,8 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
-              {/* Quinta Linha: Profissão, Email, Resolvido */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Quinta Linha: Celular, Tel Fixo */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Profissão */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
