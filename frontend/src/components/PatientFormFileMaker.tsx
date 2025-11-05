@@ -121,6 +121,12 @@ export default function PatientFormFileMaker({
     setSearchTerms({});
   };
 
+  const handlePerformSearch = () => {
+    // Fechar todas as sugestões para dar feedback visual de que a busca foi realizada
+    setShowSuggestions({});
+    // A busca já está sendo feita automaticamente pelo handleSearchChange
+  };
+
   const matchDatePattern = (dateStr: string, pattern: string): boolean => {
     // Suporta padrões: DD/MM/AAAA, */*/AAAA, DD/*/AAAA, */MM/AAAA, DD/MM/AAAA...DD/MM/AAAA
     if (pattern.includes('...')) {
@@ -529,7 +535,7 @@ export default function PatientFormFileMaker({
                 </button>
                 {isSearching && (
                   <button
-                    onClick={onSearch}
+                    onClick={handlePerformSearch}
                     className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium flex items-center gap-1"
                   >
                     <Search className="w-4 h-4" />
