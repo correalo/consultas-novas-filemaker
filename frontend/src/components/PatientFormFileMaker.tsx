@@ -24,6 +24,7 @@ interface PatientFormFileMakerProps {
   onPrevious?: () => void;
   onSelectPatient?: (patient: Patient) => void;
   onCreateNew?: () => void;
+  onFilteredPatientsChange?: (patients: Patient[]) => void;
   currentIndex: number;
   totalPatients: number;
 }
@@ -36,6 +37,7 @@ export default function PatientFormFileMaker({
   onPrevious,
   onSelectPatient,
   onCreateNew,
+  onFilteredPatientsChange,
   currentIndex,
   totalPatients 
 }: PatientFormFileMakerProps) {
@@ -122,9 +124,14 @@ export default function PatientFormFileMaker({
   };
 
   const handlePerformSearch = () => {
-    // Fechar todas as sugestões para dar feedback visual de que a busca foi realizada
+    // Fechar todas as sugestões
     setShowSuggestions({});
-    // A busca já está sendo feita automaticamente pelo handleSearchChange
+    // Sair do modo de busca para mostrar os cards filtrados
+    setIsSearching(false);
+    // Se houver pacientes filtrados, selecionar o primeiro
+    if (filteredPatients.length > 0 && onSelectPatient) {
+      onSelectPatient(filteredPatients[0]);
+    }
   };
 
   const matchDatePattern = (dateStr: string, pattern: string): boolean => {
@@ -158,21 +165,54 @@ export default function PatientFormFileMaker({
     
     // Filtrar pacientes baseado no campo e valor
     if (value.trim() && allPatients.length > 0) {
+      console.log(`\n=== BUSCA ===`);
+      console.log(`Campo: ${field}`);
+      console.log(`Valor buscado: "${value}"`);
+      console.log(`Total de pacientes: ${allPatients.length}`);
+      
       const filtered = allPatients.filter(p => {
-        const fieldValue = (p[field as keyof Patient] || '').toString();
+        const fieldValue = (p[field as keyof Patient] || '').toString().trim();
+        
+        // Debug: mostrar alguns valores
+        if (field === 'convenio') {
+          console.log(`Paciente: ${p.nome} | Convênio: "${fieldValue}"`);
+        }
         
         // Se for campo de data e tiver padrão especial
         if (field === 'dataConsulta' && (value.includes('*') || value.includes('...'))) {
           return matchDatePattern(fieldValue, value);
         }
         
+        // Para campos de select (convenio, resposta, resolvido), fazer comparação exata
+        if (field === 'convenio' || field === 'resposta' || field === 'resolvido') {
+          const match = fieldValue.toUpperCase() === value.toUpperCase();
+          if (field === 'convenio' && match) {
+            console.log(`✓ MATCH: ${p.nome}`);
+          }
+          return match;
+        }
+        
         return fieldValue.toLowerCase().includes(value.toLowerCase());
       });
+      
+      console.log(`Resultados encontrados: ${filtered.length}`);
+      console.log(`=============\n`);
+      
       setFilteredPatients(filtered);
       setShowSuggestions({ ...showSuggestions, [field]: field === 'nome' });
+      
+      // Notificar o componente pai sobre os pacientes filtrados
+      if (onFilteredPatientsChange) {
+        onFilteredPatientsChange(filtered);
+      }
     } else {
       setFilteredPatients([]);
       setShowSuggestions({ ...showSuggestions, [field]: false });
+      
+      // Limpar filtros no componente pai
+      if (onFilteredPatientsChange) {
+        onFilteredPatientsChange([]);
+      }
     }
   };
 

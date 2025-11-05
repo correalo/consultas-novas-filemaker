@@ -15,6 +15,7 @@ export default function PatientsPage() {
   const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [allPatients, setAllPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -817,20 +818,25 @@ export default function PatientsPage() {
           </div>
         ) : (
           <PatientFormFileMaker 
-            patient={patients[currentIndex]}
+            patient={(filteredPatients.length > 0 ? filteredPatients : patients)[currentIndex]}
             allPatients={patients}
             onUpdate={loadPatients}
             onNext={handleNext}
             onPrevious={handlePrevious}
             onSelectPatient={(patient) => {
-              const index = patients.findIndex(p => p._id === patient._id);
+              const patientsToSearch = filteredPatients.length > 0 ? filteredPatients : patients;
+              const index = patientsToSearch.findIndex(p => p._id === patient._id);
               if (index !== -1) setCurrentIndex(index);
+            }}
+            onFilteredPatientsChange={(filtered) => {
+              setFilteredPatients(filtered);
+              setCurrentIndex(0); // Resetar para o primeiro resultado
             }}
             onCreateNew={() => {
               router.push('/patients/new');
             }}
             currentIndex={currentIndex}
-            totalPatients={patients.length}
+            totalPatients={filteredPatients.length > 0 ? filteredPatients.length : patients.length}
           />
         )}
       </main>
