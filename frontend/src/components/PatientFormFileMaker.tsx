@@ -589,7 +589,7 @@ export default function PatientFormFileMaker({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Nome */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     NOME
                   </label>
                   <div className="flex-1 relative">
@@ -635,7 +635,7 @@ export default function PatientFormFileMaker({
 
                 {/* Data de Nascimento */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     DATA NASC.
                   </label>
                   <div className="flex-1">
@@ -727,7 +727,7 @@ export default function PatientFormFileMaker({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Idade */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     IDADE
                   </label>
                   <div className="flex-1">
@@ -742,7 +742,7 @@ export default function PatientFormFileMaker({
 
                 {/* Sexo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-16 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     SEXO
                   </label>
                   <div className="flex-1">
@@ -767,7 +767,7 @@ export default function PatientFormFileMaker({
 
                 {/* Data da Consulta */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-28 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     DATA CONSULTA
                   </label>
                   <div className="flex-1 relative">
@@ -887,7 +887,7 @@ export default function PatientFormFileMaker({
 
                 {/* Convênio */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     CONVÊNIO
                   </label>
                   <div className="flex-1">
@@ -1008,7 +1008,7 @@ export default function PatientFormFileMaker({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Subtipo Convênio */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     SUBTIPO
                   </label>
                   <div className="flex-1">
@@ -1272,7 +1272,7 @@ export default function PatientFormFileMaker({
 
                 {/* Resposta */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     RESPOSTA
                   </label>
                   <div className="flex-1">
@@ -1311,7 +1311,7 @@ export default function PatientFormFileMaker({
 
                 {/* Celular 1 */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     CEL 1
                   </label>
                   <div className="flex-1 flex gap-2">
@@ -1361,7 +1361,7 @@ export default function PatientFormFileMaker({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Tel Fixo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     TEL FIXO
                   </label>
                   <div className="flex-1">
@@ -1397,7 +1397,7 @@ export default function PatientFormFileMaker({
 
                 {/* Indicação */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     INDICAÇÃO
                   </label>
                   <div className="flex-1">
@@ -1428,7 +1428,7 @@ export default function PatientFormFileMaker({
 
                 {/* Data da Cirurgia */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-28 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     DATA CIRURGIA
                   </label>
                 <div className="flex-1">
@@ -1520,7 +1520,7 @@ export default function PatientFormFileMaker({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Profissão */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     PROFISSÃO
                   </label>
                   <div className="flex-1">
@@ -1543,7 +1543,7 @@ export default function PatientFormFileMaker({
 
                 {/* Email */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     EMAIL
                   </label>
                   <div className="flex-1">
@@ -1566,7 +1566,7 @@ export default function PatientFormFileMaker({
 
                 {/* Resolvido */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     RESOLVIDO
                   </label>
                   <div className="flex-1">
