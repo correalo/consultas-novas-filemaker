@@ -7,22 +7,28 @@ import { patientService } from '@/services/patientService';
 import { Patient } from '@/types';
 import Navbar from '@/components/Navbar';
 import PatientFormFileMaker from '@/components/PatientFormFileMaker';
-import { RefreshCw, Search, Plus } from 'lucide-react';
+import { RefreshCw, Search, Plus, Calendar, Filter, Clock, TrendingUp, BarChart3 } from 'lucide-react';
+
+type FilterPeriod = '7d' | '30d' | '3m' | '6m' | '9m' | '12m' | '15m' | '18m' | '2y' | '3y' | '4y' | '5y' | '6y' | '7y' | '8y' | '9y' | '10y' | '6y+' | 'all';
 
 export default function PatientsPage() {
   const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [allPatients, setAllPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<FilterPeriod>('all');
+  const [showYearsPopover, setShowYearsPopover] = useState(false);
 
   const loadPatients = async () => {
     try {
       setLoading(true);
       setError('');
       const data = await patientService.getAll();
+      setAllPatients(data);
       setPatients(data);
     } catch (err: any) {
       setError('Erro ao carregar pacientes. Tente novamente.');
@@ -30,6 +36,91 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterByPeriod = (period: FilterPeriod) => {
+    setActiveFilter(period);
+    
+    if (period === 'all') {
+      setPatients(allPatients);
+      return;
+    }
+
+    const now = new Date();
+    let startDate = new Date();
+
+    // Calcular data de início baseado no período
+    switch (period) {
+      case '7d':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        startDate.setDate(now.getDate() - 30);
+        break;
+      case '3m':
+        startDate.setMonth(now.getMonth() - 3);
+        break;
+      case '6m':
+        startDate.setMonth(now.getMonth() - 6);
+        break;
+      case '9m':
+        startDate.setMonth(now.getMonth() - 9);
+        break;
+      case '12m':
+        startDate.setMonth(now.getMonth() - 12);
+        break;
+      case '15m':
+        startDate.setMonth(now.getMonth() - 15);
+        break;
+      case '18m':
+        startDate.setMonth(now.getMonth() - 18);
+        break;
+      case '2y':
+        startDate.setFullYear(now.getFullYear() - 2);
+        break;
+      case '3y':
+        startDate.setFullYear(now.getFullYear() - 3);
+        break;
+      case '4y':
+        startDate.setFullYear(now.getFullYear() - 4);
+        break;
+      case '5y':
+        startDate.setFullYear(now.getFullYear() - 5);
+        break;
+      case '6y':
+        startDate.setFullYear(now.getFullYear() - 6);
+        break;
+      case '7y':
+        startDate.setFullYear(now.getFullYear() - 7);
+        break;
+      case '8y':
+        startDate.setFullYear(now.getFullYear() - 8);
+        break;
+      case '9y':
+        startDate.setFullYear(now.getFullYear() - 9);
+        break;
+      case '10y':
+        startDate.setFullYear(now.getFullYear() - 10);
+        break;
+      case '6y+':
+        startDate.setFullYear(now.getFullYear() - 100); // Mais de 6 anos = tudo antes de 6 anos atrás
+        break;
+    }
+
+    // Filtrar pacientes pela data da consulta
+    const filtered = allPatients.filter(patient => {
+      if (!patient.dataConsulta) return false;
+      
+      try {
+        const [day, month, year] = patient.dataConsulta.split('/');
+        const consultaDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return consultaDate >= startDate && consultaDate <= now;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    setPatients(filtered);
   };
 
   useEffect(() => {
@@ -89,61 +180,293 @@ export default function PatientsPage() {
           <p className="text-gray-600">Visualize, edite e gerencie todos os pacientes cadastrados</p>
         </div>
 
-        {/* Search and Actions */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+        {/* Filter Bar - FileMaker Style */}
+        <div className="bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-300 rounded-lg shadow-sm p-2 mb-6 overflow-x-auto">
+          {/* Linha Única - Todos os Filtros */}
+          <div className="flex flex-wrap lg:flex-nowrap gap-1 items-center min-w-max lg:min-w-0">
+            <button
+              onClick={() => filterByPeriod('7d')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '7d'
+                  ? 'bg-gradient-to-b from-orange-400 to-orange-500 text-white border-orange-600 shadow-lg'
+                  : 'bg-gradient-to-b from-orange-100 to-orange-200 text-orange-800 border-orange-300 hover:from-orange-200 hover:to-orange-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">7</span>
+                <span className="text-[10px]">DIAS</span>
               </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Buscar por nome, telefone ou convênio..."
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
+            </button>
+            <button
+              onClick={() => filterByPeriod('30d')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '30d'
+                  ? 'bg-gradient-to-b from-amber-400 to-amber-500 text-white border-amber-600 shadow-lg'
+                  : 'bg-gradient-to-b from-amber-100 to-amber-200 text-amber-800 border-amber-300 hover:from-amber-200 hover:to-amber-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">30</span>
+                <span className="text-[10px]">DIAS</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('3m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '3m'
+                  ? 'bg-gradient-to-b from-blue-400 to-blue-500 text-white border-blue-600 shadow-lg'
+                  : 'bg-gradient-to-b from-blue-100 to-blue-200 text-blue-800 border-blue-300 hover:from-blue-200 hover:to-blue-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">3</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('6m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '6m'
+                  ? 'bg-gradient-to-b from-cyan-400 to-cyan-500 text-white border-cyan-600 shadow-lg'
+                  : 'bg-gradient-to-b from-cyan-100 to-cyan-200 text-cyan-800 border-cyan-300 hover:from-cyan-200 hover:to-cyan-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">6</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('9m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '9m'
+                  ? 'bg-gradient-to-b from-teal-400 to-teal-500 text-white border-teal-600 shadow-lg'
+                  : 'bg-gradient-to-b from-teal-100 to-teal-200 text-teal-800 border-teal-300 hover:from-teal-200 hover:to-teal-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">9</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('12m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '12m'
+                  ? 'bg-gradient-to-b from-emerald-400 to-emerald-500 text-white border-emerald-600 shadow-lg'
+                  : 'bg-gradient-to-b from-emerald-100 to-emerald-200 text-emerald-800 border-emerald-300 hover:from-emerald-200 hover:to-emerald-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">12</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('15m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '15m'
+                  ? 'bg-gradient-to-b from-green-400 to-green-500 text-white border-green-600 shadow-lg'
+                  : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">15</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('18m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '18m'
+                  ? 'bg-gradient-to-b from-lime-400 to-lime-500 text-white border-lime-600 shadow-lg'
+                  : 'bg-gradient-to-b from-lime-100 to-lime-200 text-lime-800 border-lime-300 hover:from-lime-200 hover:to-lime-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">18</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('2y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '2y'
+                  ? 'bg-gradient-to-b from-purple-400 to-purple-500 text-white border-purple-600 shadow-lg'
+                  : 'bg-gradient-to-b from-purple-100 to-purple-200 text-purple-800 border-purple-300 hover:from-purple-200 hover:to-purple-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">2</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('3y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '3y'
+                  ? 'bg-gradient-to-b from-violet-400 to-violet-500 text-white border-violet-600 shadow-lg'
+                  : 'bg-gradient-to-b from-violet-100 to-violet-200 text-violet-800 border-violet-300 hover:from-violet-200 hover:to-violet-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">3</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('4y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '4y'
+                  ? 'bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 text-white border-fuchsia-600 shadow-lg'
+                  : 'bg-gradient-to-b from-fuchsia-100 to-fuchsia-200 text-fuchsia-800 border-fuchsia-300 hover:from-fuchsia-200 hover:to-fuchsia-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">4</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('5y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '5y'
+                  ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white border-pink-600 shadow-lg'
+                  : 'bg-gradient-to-b from-pink-100 to-pink-200 text-pink-800 border-pink-300 hover:from-pink-200 hover:to-pink-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">5</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            
+            {/* Botão > 6 ANOS com Popover */}
+            <div className="relative">
+              <button
+                onClick={() => setShowYearsPopover(!showYearsPopover)}
+                className={`min-w-[65px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                  activeFilter === '6y+' || activeFilter === '6y' || activeFilter === '7y' || activeFilter === '8y' || activeFilter === '9y' || activeFilter === '10y'
+                    ? 'bg-gradient-to-b from-red-500 to-red-600 text-white border-red-700 shadow-lg'
+                    : 'bg-gradient-to-b from-red-100 to-red-200 text-red-800 border-red-300 hover:from-red-200 hover:to-red-300 shadow-sm'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-lg font-bold">&gt; 6</span>
+                  <span className="text-[10px]">ANOS</span>
+                </div>
+              </button>
+              
+              {/* Popover com anos individuais */}
+              {showYearsPopover && (
+                <>
+                  {/* Overlay para fechar ao clicar fora */}
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setShowYearsPopover(false)}
+                  ></div>
+                  
+                  {/* Popover */}
+                  <div className="absolute top-full left-0 mt-2 z-20 bg-white border-2 border-gray-400 rounded-lg shadow-xl p-2 min-w-[200px]">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => {
+                          filterByPeriod('6y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '6y'
+                            ? 'bg-gradient-to-b from-rose-400 to-rose-500 text-white border-rose-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        6 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('7y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '7y'
+                            ? 'bg-gradient-to-b from-indigo-400 to-indigo-500 text-white border-indigo-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        7 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('8y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '8y'
+                            ? 'bg-gradient-to-b from-sky-400 to-sky-500 text-white border-sky-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        8 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('9y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '9y'
+                            ? 'bg-gradient-to-b from-slate-400 to-slate-500 text-white border-slate-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        9 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('10y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '10y'
+                            ? 'bg-gradient-to-b from-gray-400 to-gray-500 text-white border-gray-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        10 ANOS
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
+            
+            {/* Separador */}
+            <div className="w-px bg-gray-400 mx-1"></div>
+            
+            {/* Botão Todos */}
             <button
-              onClick={handleSearch}
-              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+              onClick={() => filterByPeriod('all')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === 'all'
+                  ? 'bg-gradient-to-b from-green-500 to-green-600 text-white border-green-700 shadow-lg'
+                  : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
+              }`}
             >
-              <Search className="w-5 h-5" />
-              Buscar
+              <div className="flex flex-col items-center gap-0.5">
+                <BarChart3 className="w-6 h-6" />
+                <span className="text-[10px]">TODOS</span>
+              </div>
             </button>
-            <button
-              onClick={loadPatients}
-              disabled={loading}
-              className="px-6 py-3 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-              Atualizar
-            </button>
+            
+            {/* Contador de Resultados */}
+            <div className="ml-auto flex items-center gap-2 px-3 py-2 bg-white border border-gray-400 rounded shadow-sm">
+              <TrendingUp className="w-4 h-4 text-blue-600" />
+              <span className="text-xs font-bold text-gray-700">
+                {patients.length} registro{patients.length !== 1 ? 's' : ''}
+              </span>
+            </div>
           </div>
         </div>
-
-        {/* Stats */}
-        {!loading && patients.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-blue-100 text-sm font-medium mb-1">Total de Pacientes</p>
-              <p className="text-4xl font-bold">{patients.length}</p>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-green-100 text-sm font-medium mb-1">Resolvidos</p>
-              <p className="text-4xl font-bold">
-                {patients.filter((p) => p.resolvido && p.resolvido !== 'LIMBO').length}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-purple-100 text-sm font-medium mb-1">Com Alerta</p>
-              <p className="text-4xl font-bold">
-                {patients.filter((p) => p.alerta).length}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Content */}
         {loading ? (
