@@ -527,6 +527,15 @@ export default function PatientFormFileMaker({
                   <Search className="w-4 h-4" />
                   {isSearching ? 'SAIR DA BUSCA' : 'BUSCAR'}
                 </button>
+                {isSearching && (
+                  <button
+                    onClick={onSearch}
+                    className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <Search className="w-4 h-4" />
+                    REALIZAR BUSCA
+                  </button>
+                )}
                 <button
                   onClick={onCreateNew}
                   className="px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-sm font-medium flex items-center gap-1"
