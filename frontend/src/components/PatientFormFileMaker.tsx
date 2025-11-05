@@ -567,19 +567,32 @@ export default function PatientFormFileMaker({
         </div>
       </div>
 
+      {/* Barra de Recomendação */}
+      <div className="bg-gradient-to-b from-blue-50 to-blue-100 border-b-2 border-blue-300 px-4 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-center flex-wrap">
+          <FileText className="w-5 h-5 text-blue-700" />
+          <span className="font-bold text-blue-900 text-sm sm:text-base">RECOMENDAÇÃO:</span>
+          <span className="text-sm sm:text-base text-gray-800">
+            PERGUNTAR SEMPRE <span className="font-bold text-blue-900">NOME, CELULAR E CONVÊNIO</span> AO MARCAR A CIRURGIA
+          </span>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto">
         <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6">
           {/* Form Grid - FileMaker Style - Responsivo */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Left Column */}
-            <div className="lg:col-span-7 space-y-3 sm:space-y-4">
-              {/* Nome */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  NOME
-                </label>
-                <div className="flex-1 relative">
+          <div className="grid grid-cols-1 gap-4">
+            {/* Main Column */}
+            <div className="space-y-3 sm:space-y-4">
+              {/* Primeira Linha: Nome, Data de Nascimento, Idade */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Nome */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    NOME
+                  </label>
+                  <div className="flex-1 relative">
                   {isSearching ? (
                     <>
                       <input
@@ -617,15 +630,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.nome}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Data de Nascimento */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  DATA DE NASCIMENTO
-                </label>
-                <div className="flex-1">
+                {/* Data de Nascimento */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    DATA NASC.
+                  </label>
+                  <div className="flex-1">
                   {isEditing ? (
                     <div className="flex gap-2 items-center">
                       <input
@@ -706,55 +719,58 @@ export default function PatientFormFileMaker({
                       {currentPatient.dataNascimento || '\u00A0'}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Idade */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  IDADE
-                </label>
-                <div className="flex-1">
-                  <div className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded min-h-[34px] flex items-center">
-                    {currentPatient.idade ? `${currentPatient.idade} anos` : '\u00A0'}
-                    {isEditing && currentPatient.dataNascimento && (
-                      <span className="ml-2 text-xs text-gray-500 italic">(calculado automaticamente)</span>
-                    )}
+                {/* Idade */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    IDADE
+                  </label>
+                  <div className="flex-1">
+                    <div className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded min-h-[34px] flex items-center">
+                      {currentPatient.idade ? `${currentPatient.idade} anos` : '\u00A0'}
+                      {isEditing && currentPatient.dataNascimento && (
+                        <span className="ml-2 text-xs text-gray-500 italic">(auto)</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Sexo */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  SEXO
-                </label>
-                <div className="flex-1">
-                  {isEditing ? (
-                    <select
-                      value={currentPatient.sexo || ''}
-                      onChange={(e) => handleChange('sexo', e.target.value)}
-                      aria-label="Sexo"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="M">M</option>
-                      <option value="F">F</option>
-                    </select>
-                  ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
-                      {currentPatient.sexo || '\u00A0'}
-                    </div>
-                  )}
+              {/* Segunda Linha: Sexo, Data Consulta, Convênio */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Sexo */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-16 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    SEXO
+                  </label>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <select
+                        value={currentPatient.sexo || ''}
+                        onChange={(e) => handleChange('sexo', e.target.value)}
+                        aria-label="Sexo"
+                        className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Selecione...</option>
+                        <option value="M">M</option>
+                        <option value="F">F</option>
+                      </select>
+                    ) : (
+                      <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
+                        {currentPatient.sexo || '\u00A0'}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Data da Consulta */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  DATA DA CONSULTA
-                </label>
-                <div className="flex-1 relative">
+                {/* Data da Consulta */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-28 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    DATA CONSULTA
+                  </label>
+                  <div className="flex-1 relative">
                   {isSearching ? (
                     <div className="flex gap-2">
                       <input
@@ -866,15 +882,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.dataConsulta}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Convênio */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  CONVÊNIO
-                </label>
-                <div className="flex-1">
+                {/* Convênio */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    CONVÊNIO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <select
                       value={searchTerms.convenio || ''}
@@ -984,15 +1000,18 @@ export default function PatientFormFileMaker({
                       {currentPatient.convenio}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
-              {/* Subtipo Convênio */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  SUBTIPO CONVÊNIO
-                </label>
-                <div className="flex-1">
+              {/* Terceira Linha: Subtipo, Resposta, Celular */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Subtipo Convênio */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    SUBTIPO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <input
                       type="text"
@@ -1248,15 +1267,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.subtipoConvenio}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Resposta */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  RESPOSTA
-                </label>
-                <div className="flex-1">
+                {/* Resposta */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    RESPOSTA
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <select
                       value={searchTerms.resposta || ''}
@@ -1287,15 +1306,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.resposta}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Celular 1 */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  CEL 1
-                </label>
-                <div className="flex-1 flex gap-2">
+                {/* Celular 1 */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    CEL 1
+                  </label>
+                  <div className="flex-1 flex gap-2">
                   {isSearching ? (
                     <input
                       type="text"
@@ -1334,15 +1353,18 @@ export default function PatientFormFileMaker({
                       )}
                     </>
                   )}
+                  </div>
                 </div>
               </div>
 
-              {/* Tel Fixo */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  TEL FIXO
-                </label>
-                <div className="flex-1">
+              {/* Quarta Linha: Tel Fixo, Indicação, Data Cirurgia */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Tel Fixo */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    TEL FIXO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <input
                       type="text"
@@ -1370,15 +1392,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.telFixo}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Indicação */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  INDICAÇÃO
-                </label>
-                <div className="flex-1">
+                {/* Indicação */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    INDICAÇÃO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <input
                       type="text"
@@ -1401,14 +1423,14 @@ export default function PatientFormFileMaker({
                       {currentPatient.indicacao}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Data da Cirurgia */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  DATA DA CIRURGIA
-                </label>
+                {/* Data da Cirurgia */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-28 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    DATA CIRURGIA
+                  </label>
                 <div className="flex-1">
                   {isEditing ? (
                     <div className="flex gap-2">
@@ -1490,15 +1512,18 @@ export default function PatientFormFileMaker({
                       {currentPatient.dataCirurgia || '\u00A0'}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
-              {/* Profissão */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  PROFISSÃO
-                </label>
-                <div className="flex-1">
+              {/* Quinta Linha: Profissão, Email, Resolvido */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Profissão */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    PROFISSÃO
+                  </label>
+                  <div className="flex-1">
                   {isEditing ? (
                     <input
                       type="text"
@@ -1513,15 +1538,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.profissao || '\u00A0'}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Email */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  EMAIL
-                </label>
-                <div className="flex-1">
+                {/* Email */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-20 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    EMAIL
+                  </label>
+                  <div className="flex-1">
                   {isEditing ? (
                     <input
                       type="email"
@@ -1536,15 +1561,15 @@ export default function PatientFormFileMaker({
                       {currentPatient.email || '\u00A0'}
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Resolvido */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  RESOLVIDO
-                </label>
-                <div className="flex-1">
+                {/* Resolvido */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-32 lg:w-24 sm:text-right sm:pr-2 text-xs sm:text-sm font-medium text-gray-700">
+                    RESOLVIDO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <select
                       value={searchTerms.resolvido || ''}
@@ -1580,10 +1605,11 @@ export default function PatientFormFileMaker({
                       {currentPatient.resolvido}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
-              {/* Classificação */}
+              {/* Classificação - Campo individual */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   CLASSIFICAÇÃO
@@ -1669,52 +1695,36 @@ export default function PatientFormFileMaker({
                   )}
                 </div>
               </div>
-            </div>
 
-            {/* Right Column - Recomendações */}
-            <div className="lg:col-span-5">
-              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-3 sm:p-4">
-                <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  RECOMENDAÇÕES:
-                </h3>
-                <ol className="space-y-2 text-sm text-gray-700">
-                  <li>1) TENTAR PERGUNTAR SEMPRE O CONVÊNIO E E-MAIL QDO FOR MARCAR A CONSULTA</li>
-                  <li>2) NÃO USAR "-" NOS NÚMEROS DOS TELEFONES</li>
-                  <li>3) RESPEITAR O MÁXIMO OS LOCAIS CELULAR E FIXO</li>
-                  <li className="font-semibold text-red-600">
-                    4) CUIDADO AO CLICAR <span className="bg-red-200 px-1">LIMBO</span>, POIS PERDEREMOS DEFINITIVAMENTE O CAMPO PRÉVIO DO RESOLVIDO
-                  </li>
-                </ol>
-
-                {/* Alerta */}
-                {currentPatient.alerta && (
-                  <div className="mt-4 p-3 bg-red-100 border-2 border-red-400 rounded">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-                      <div>
-                        <p className="font-bold text-red-900 text-sm">ALERTA</p>
-                        {isEditing ? (
-                          <textarea
-                            value={currentPatient.alerta || ''}
-                            onChange={(e) => handleChange('alerta', e.target.value)}
-                            rows={2}
-                            aria-label="Alerta"
-                            className="w-full mt-1 px-2 py-1 border border-red-400 rounded text-sm"
-                          />
-                        ) : (
-                          <p className="text-sm text-red-700 mt-1">{currentPatient.alerta}</p>
-                        )}
-                      </div>
+              {/* Alerta */}
+              <div className="flex items-start">
+                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700 pt-2 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
+                  ALERTA
+                </label>
+                <div className="flex-1">
+                  {isSearching ? (
+                    <input
+                      type="text"
+                      value={searchTerms.alerta || ''}
+                      onChange={(e) => handleSearchChange('alerta', e.target.value)}
+                      placeholder="Buscar por alerta..."
+                      aria-label="Buscar alerta"
+                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
+                    />
+                  ) : isEditing ? (
+                    <textarea
+                      value={currentPatient.alerta || ''}
+                      onChange={(e) => handleChange('alerta', e.target.value)}
+                      rows={2}
+                      aria-label="Alerta"
+                      className="w-full px-3 py-1.5 border border-red-400 rounded focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-50"
+                    />
+                  ) : (
+                    <div className="px-3 py-1.5 bg-red-50 border border-red-300 rounded min-h-[60px] whitespace-pre-wrap text-red-700">
+                      {currentPatient.alerta}
                     </div>
-                  </div>
-                )}
-
-                {/* ID */}
-                <div className="mt-4 text-right">
-                  <span className="inline-block bg-yellow-300 border-2 border-yellow-500 px-3 py-1 rounded font-bold text-lg">
-                    Id: {currentPatient.ano || '----'}
-                  </span>
+                  )}
                 </div>
               </div>
             </div>
