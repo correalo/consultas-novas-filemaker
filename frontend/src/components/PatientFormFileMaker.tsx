@@ -134,6 +134,24 @@ export default function PatientFormFileMaker({
     }
   };
 
+  const handleUpdateAndClearFilters = () => {
+    // Limpar filtros
+    setFilteredPatients([]);
+    setSearchTerms({});
+    setIsSearching(false);
+    setShowSuggestions({});
+    
+    // Notificar componente pai para limpar filtros
+    if (onFilteredPatientsChange) {
+      onFilteredPatientsChange([]);
+    }
+    
+    // Chamar atualização
+    if (onUpdate) {
+      onUpdate();
+    }
+  };
+
   const matchDatePattern = (dateStr: string, pattern: string): boolean => {
     // Suporta padrões: DD/MM/AAAA, */*/AAAA, DD/*/AAAA, */MM/AAAA, DD/MM/AAAA...DD/MM/AAAA
     if (pattern.includes('...')) {
@@ -422,7 +440,7 @@ export default function PatientFormFileMaker({
             {!isEditing ? (
               <>
                 <button
-                  onClick={onUpdate}
+                  onClick={handleUpdateAndClearFilters}
                   className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
                 >
                   <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -550,7 +568,7 @@ export default function PatientFormFileMaker({
             {!isEditing ? (
               <>
                 <button
-                  onClick={onUpdate}
+                  onClick={handleUpdateAndClearFilters}
                   className="px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-sm font-medium flex items-center gap-1"
                 >
                   <RefreshCw className="w-4 h-4" />
