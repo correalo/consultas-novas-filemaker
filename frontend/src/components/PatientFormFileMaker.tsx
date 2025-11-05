@@ -1355,10 +1355,7 @@ export default function PatientFormFileMaker({
                   )}
                   </div>
                 </div>
-              </div>
 
-              {/* Quarta Linha: Subtipo, Resposta */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Tel Fixo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
@@ -1394,7 +1391,10 @@ export default function PatientFormFileMaker({
                   )}
                   </div>
                 </div>
+              </div>
 
+              {/* Quarta Linha: Indicação, Data Cirurgia */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Indicação */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
@@ -1516,7 +1516,7 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
-              {/* Quinta Linha: Celular, Tel Fixo */}
+              {/* Quinta Linha: Profissão, Email */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Profissão */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
@@ -1563,7 +1563,10 @@ export default function PatientFormFileMaker({
                   )}
                   </div>
                 </div>
+              </div>
 
+              {/* Sexta Linha: Resolvido, Classificação */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Resolvido */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
                   <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
@@ -1607,14 +1610,13 @@ export default function PatientFormFileMaker({
                   )}
                   </div>
                 </div>
-              </div>
 
-              {/* Classificação - Campo individual */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
-                  CLASSIFICAÇÃO
-                </label>
-                <div className="flex-1">
+                {/* Classificação */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                    CLASSIFICAÇÃO
+                  </label>
+                  <div className="flex-1">
                   {isSearching ? (
                     <input
                       type="text"
@@ -1637,6 +1639,7 @@ export default function PatientFormFileMaker({
                       {currentPatient.classificacao}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
