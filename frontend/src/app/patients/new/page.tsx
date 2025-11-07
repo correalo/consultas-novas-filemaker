@@ -102,35 +102,35 @@ export default function NewPatientPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
             >
-              <ArrowLeft className="w-5 h-5" />
-              Voltar
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Voltar</span>
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">Novo Paciente</h1>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Novo Paciente</h1>
           </div>
           <button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
           >
-            <Save className="w-5 h-5" />
+            <Save className="w-4 h-4 sm:w-5 sm:h-5" />
             {isSaving ? 'Salvando...' : 'Salvar'}
           </button>
         </div>
       </div>
 
       {/* Form */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-4 sm:p-5 md:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Nome *
               </label>
               <input
@@ -139,13 +139,13 @@ export default function NewPatientPage() {
                 onChange={(e) => handleChange('nome', e.target.value)}
                 required
                 aria-label="Nome do paciente"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Data da Consulta */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Data da Consulta *
               </label>
               <div className="flex gap-2 items-center relative">
@@ -156,16 +156,16 @@ export default function NewPatientPage() {
                   placeholder="DD/MM/AAAA"
                   maxLength={10}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="relative">
                   <button
                     type="button"
                     onClick={handleCalendarClick}
-                    className="flex-shrink-0 w-10 h-10 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-300 flex items-center justify-center"
+                    className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-300 flex items-center justify-center"
                     title="Escolher data"
                   >
-                    <Calendar className="w-5 h-5 text-gray-600" />
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                   </button>
                   {/* Input date escondido para abrir o calendário */}
                   <input
@@ -184,14 +184,14 @@ export default function NewPatientPage() {
 
             {/* Convênio */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Convênio
               </label>
               <select
                 value={formData.convenio}
                 onChange={(e) => handleChange('convenio', e.target.value)}
                 aria-label="Convênio"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Selecione...</option>
                 <option value="PARTICULAR">PARTICULAR</option>
@@ -242,7 +242,7 @@ export default function NewPatientPage() {
 
             {/* Subtipo Convênio */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Subtipo Convênio
               </label>
               <input
@@ -250,13 +250,13 @@ export default function NewPatientPage() {
                 value={formData.subtipoConvenio}
                 onChange={(e) => handleChange('subtipoConvenio', e.target.value)}
                 aria-label="Subtipo do convênio"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Celular */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Celular
               </label>
               <input
@@ -265,13 +265,13 @@ export default function NewPatientPage() {
                 onChange={(e) => handleChange('celular', e.target.value)}
                 placeholder="(00) 00000-0000"
                 aria-label="Celular"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Telefone Fixo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Telefone Fixo
               </label>
               <input
@@ -280,13 +280,13 @@ export default function NewPatientPage() {
                 onChange={(e) => handleChange('telFixo', e.target.value)}
                 placeholder="(00) 0000-0000"
                 aria-label="Telefone fixo"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Indicação */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Indicação
               </label>
               <input
@@ -294,13 +294,13 @@ export default function NewPatientPage() {
                 value={formData.indicacao}
                 onChange={(e) => handleChange('indicacao', e.target.value)}
                 aria-label="Indicação"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Classificação */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Classificação
               </label>
               <input
@@ -308,13 +308,13 @@ export default function NewPatientPage() {
                 value={formData.classificacao}
                 onChange={(e) => handleChange('classificacao', e.target.value)}
                 aria-label="Classificação"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Observação */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Observação
               </label>
               <textarea
@@ -322,13 +322,13 @@ export default function NewPatientPage() {
                 onChange={(e) => handleChange('observacao', e.target.value)}
                 rows={4}
                 aria-label="Observação"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Alerta */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Alerta
               </label>
               <input
@@ -336,25 +336,25 @@ export default function NewPatientPage() {
                 value={formData.alerta}
                 onChange={(e) => handleChange('alerta', e.target.value)}
                 aria-label="Alerta"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-4">
+          <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <button
               type="button"
               onClick={() => router.push('/dashboard')}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <Save className="w-5 h-5" />
+              <Save className="w-4 h-4 sm:w-5 sm:h-5" />
               {isSaving ? 'Salvando...' : 'Salvar Paciente'}
             </button>
           </div>

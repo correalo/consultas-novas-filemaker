@@ -216,9 +216,9 @@ export default function PatientsPage() {
         </div>
 
         {/* Filter Bar - FileMaker Style */}
-        <div className="bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-300 rounded-lg shadow-sm p-2 mb-6 overflow-x-auto">
-          {/* Linha Única - Todos os Filtros */}
-          <div className="flex flex-wrap lg:flex-nowrap gap-1 items-center min-w-max lg:min-w-0">
+        <div className="bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-300 rounded-lg shadow-sm p-3 mb-6">
+          {/* Grid de Filtros - 5 por linha */}
+          <div className="grid grid-cols-5 gap-2 mb-2">
             <button
               onClick={() => filterByPeriod('7d')}
               className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
@@ -323,6 +323,10 @@ export default function PatientsPage() {
                 <span className="text-[10px]">MESES</span>
               </div>
             </button>
+          </div>
+
+          {/* Segunda linha - 5 botões */}
+          <div className="grid grid-cols-5 gap-2 mb-2">
             <button
               onClick={() => filterByPeriod('2y')}
               className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
@@ -474,10 +478,10 @@ export default function PatientsPage() {
                 </>
               )}
             </div>
-            
-            {/* Separador */}
-            <div className="w-px bg-gray-400 mx-1"></div>
-            
+          </div>
+
+          {/* Terceira linha - Botões TODOS e STATUS */}
+          <div className="flex gap-2">
             {/* Botão Todos */}
             <button
               onClick={() => filterByPeriod('all')}
@@ -492,9 +496,6 @@ export default function PatientsPage() {
                 <span className="text-[10px]">TODOS</span>
               </div>
             </button>
-            
-            {/* Separador */}
-            <div className="w-px bg-gray-400 mx-1"></div>
             
             {/* Botão Filtro de Status */}
             <div className="relative">

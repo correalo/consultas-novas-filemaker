@@ -53,11 +53,11 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
-          <p className="text-gray-600">Visão geral do sistema de gerenciamento</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Dashboard</h1>
+          <p className="text-sm sm:text-base text-gray-600">Visão geral do sistema de gerenciamento</p>
         </div>
 
         {loading ? (
@@ -70,41 +70,41 @@ export default function DashboardPage() {
         ) : (
           <>
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <Users className="w-8 h-8 opacity-80" />
-                  <TrendingUp className="w-5 h-5 opacity-60" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 opacity-80" />
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 opacity-60" />
                 </div>
-                <p className="text-blue-100 text-sm font-medium mb-1">Total de Pacientes</p>
-                <p className="text-4xl font-bold">{patients.length}</p>
+                <p className="text-blue-100 text-xs sm:text-sm font-medium mb-1">Total de Pacientes</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold">{patients.length}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <Calendar className="w-8 h-8 opacity-80" />
+              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 opacity-80" />
                   <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{totalCompareceu}</span>
                 </div>
-                <p className="text-green-100 text-sm font-medium mb-1">Resolvidos</p>
-                <p className="text-4xl font-bold">{totalResolvidos}</p>
+                <p className="text-green-100 text-xs sm:text-sm font-medium mb-1">Resolvidos</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold">{totalResolvidos}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <AlertTriangle className="w-8 h-8 opacity-80" />
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 opacity-80" />
                   <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{totalNaoCompareceu}</span>
                 </div>
-                <p className="text-orange-100 text-sm font-medium mb-1">Com Alerta</p>
-                <p className="text-4xl font-bold">{totalComAlerta}</p>
+                <p className="text-orange-100 text-xs sm:text-sm font-medium mb-1">Com Alerta</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold">{totalComAlerta}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <FileText className="w-8 h-8 opacity-80" />
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <FileText className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 opacity-80" />
                   <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Hoje</span>
                 </div>
-                <p className="text-purple-100 text-sm font-medium mb-1">Consultas Hoje</p>
-                <p className="text-4xl font-bold">
+                <p className="text-purple-100 text-xs sm:text-sm font-medium mb-1">Consultas Hoje</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold">
                   {patients.filter(p => {
                     const today = new Date().toLocaleDateString('pt-BR');
                     return p.dataConsulta === today;
@@ -114,61 +114,61 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <button
                 onClick={() => router.push('/patients')}
-                className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all group text-left"
+                className="bg-white rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-8 shadow-md hover:shadow-lg transition-all group text-left"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-blue-100 rounded-lg p-3">
-                    <Users className="w-8 h-8 text-blue-600" />
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="bg-blue-100 rounded-lg p-2 sm:p-3">
+                    <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-600" />
                   </div>
-                  <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Gerenciar Pacientes</h3>
-                <p className="text-gray-600">Visualize, edite e gerencie todos os pacientes cadastrados</p>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">Gerenciar Pacientes</h3>
+                <p className="text-sm sm:text-base text-gray-600">Visualize, edite e gerencie todos os pacientes cadastrados</p>
               </button>
 
               <button
                 onClick={() => router.push('/patients/new')}
-                className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all group text-left"
+                className="bg-white rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-8 shadow-md hover:shadow-lg transition-all group text-left"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-green-100 rounded-lg p-3">
-                    <Calendar className="w-8 h-8 text-green-600" />
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="bg-green-100 rounded-lg p-2 sm:p-3">
+                    <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-green-600" />
                   </div>
-                  <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Novo Paciente</h3>
-                <p className="text-gray-600">Cadastre um novo paciente no sistema</p>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">Novo Paciente</h3>
+                <p className="text-sm sm:text-base text-gray-600">Cadastre um novo paciente no sistema</p>
               </button>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Pacientes Recentes</h3>
+            <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-5 md:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">Pacientes Recentes</h3>
               {patients.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">Nenhum paciente cadastrado ainda</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {patients.slice(0, 5).map((patient) => (
                     <div
                       key={patient._id}
-                      className="p-5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+                      className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
                       onClick={() => router.push('/patients')}
                     >
                       {/* Header */}
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center">
-                            <Users className="w-6 h-6 text-blue-600" />
+                      <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+                        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                          <div className="bg-blue-100 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0">
+                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                           </div>
-                          <div>
-                            <p className="font-bold text-gray-800 text-lg">{patient.nome}</p>
-                            <p className="text-sm text-gray-500">{patient.convenio || 'Sem convênio'}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-gray-800 text-sm sm:text-base md:text-lg truncate">{patient.nome}</p>
+                            <p className="text-xs sm:text-sm text-gray-500 truncate">{patient.convenio || 'Sem convênio'}</p>
                           </div>
                         </div>
-                        <span className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                        <span className={`text-xs px-2 sm:px-3 py-1 rounded-full font-semibold whitespace-nowrap flex-shrink-0 ${
                           patient.resposta === 'COMPARECEU'
                             ? 'bg-green-100 text-green-700'
                             : patient.resposta === 'NÃO COMPARECEU'
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Info Grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 text-xs sm:text-sm">
                         {/* Data Consulta */}
                         {patient.dataConsulta && (
                           <div className="flex items-center gap-2 text-gray-600">

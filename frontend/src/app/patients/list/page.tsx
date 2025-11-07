@@ -95,19 +95,19 @@ export default function PatientsListPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Lista de Pacientes</h1>
-          <p className="text-gray-600">Visualize todos os pacientes em formato de lista</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Lista de Pacientes</h1>
+          <p className="text-sm sm:text-base text-gray-600">Visualize todos os pacientes em formato de lista</p>
         </div>
 
         {/* Search and Actions */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-5 md:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
             <div className="flex-1 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
               </div>
               <input
                 type="text"
@@ -115,41 +115,41 @@ export default function PatientsListPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Buscar por nome, telefone ou convênio..."
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
             <div className="flex gap-2">
               <button
                 onClick={handleSearch}
-                className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Buscar</span>
               </button>
               <button
                 onClick={loadPatients}
                 disabled={loading}
-                className="px-6 py-3 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
               >
-                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 ${loading ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Atualizar</span>
               </button>
               <button
                 onClick={() => router.push('/patients/new')}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Novo</span>
               </button>
             </div>
           </div>
 
           {/* View Mode Toggle */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-sm text-gray-600">Visualização:</span>
+          <div className="mt-3 sm:mt-4 flex items-center gap-2">
+            <span className="text-xs sm:text-sm text-gray-600">Visualização:</span>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 viewMode === 'table'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -159,7 +159,7 @@ export default function PatientsListPage() {
             </button>
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 viewMode === 'cards'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -171,26 +171,26 @@ export default function PatientsListPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600">Total</p>
-            <p className="text-2xl font-bold text-gray-800">{filteredPatients.length}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-600">Total</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-800">{filteredPatients.length}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600">Resolvidos</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-600">Resolvidos</p>
+            <p className="text-xl sm:text-2xl font-bold text-green-600">
               {filteredPatients.filter(p => p.resolvido && p.resolvido !== 'LIMBO').length}
             </p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600">Compareceram</p>
-            <p className="text-2xl font-bold text-blue-600">
+          <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-600">Compareceram</p>
+            <p className="text-xl sm:text-2xl font-bold text-blue-600">
               {filteredPatients.filter(p => p.resposta === 'COMPARECEU').length}
             </p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600">Com Alerta</p>
-            <p className="text-2xl font-bold text-orange-600">
+          <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-600">Com Alerta</p>
+            <p className="text-xl sm:text-2xl font-bold text-orange-600">
               {filteredPatients.filter(p => p.alerta).length}
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function PatientsListPage() {
           </div>
         ) : viewMode === 'table' ? (
           /* Table View */
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -320,7 +320,7 @@ export default function PatientsListPage() {
           </div>
         ) : (
           /* Cards View */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredPatients.map((patient) => (
               <div
                 key={patient._id}
