@@ -436,41 +436,67 @@ export default function PatientFormFileMaker({
           </div>
           
           {/* Linha 3: Botões de ação */}
-          <div className="flex gap-1 sm:gap-2 flex-wrap">
+          <div className="space-y-1 sm:space-y-0">
             {!isEditing ? (
               <>
-                <button
-                  onClick={handleUpdateAndClearFilters}
-                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
-                >
-                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">ATUALIZAR</span>
-                  <span className="sm:hidden">ATU</span>
-                </button>
-                <button
-                  onClick={handleEdit}
-                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-xs sm:text-sm font-medium"
-                >
-                  EDITAR
-                </button>
-                <button
-                  onClick={handleSearch}
-                  className={`flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 rounded shadow-sm text-xs sm:text-sm font-medium flex items-center justify-center gap-1 ${
-                    isSearching 
-                      ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                >
-                  <Search className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">{isSearching ? 'SAIR' : 'BUSCAR'}</span>
-                </button>
-                <button
-                  onClick={onCreateNew}
-                  className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
-                >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">NOVO</span>
-                </button>
+                {/* Primeira linha de botões - ATU e EDITAR (mobile) / Todos em uma linha (desktop) */}
+                <div className="flex gap-1 sm:gap-2">
+                  <button
+                    onClick={handleUpdateAndClearFilters}
+                    className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
+                  >
+                    <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>ATUALIZAR</span>
+                  </button>
+                  <button
+                    onClick={handleEdit}
+                    className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-xs sm:text-sm font-medium"
+                  >
+                    EDITAR
+                  </button>
+                  
+                  {/* BUSCAR e NOVO aparecem na mesma linha em desktop */}
+                  <button
+                    onClick={handleSearch}
+                    className={`hidden sm:flex flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 rounded shadow-sm text-xs sm:text-sm font-medium items-center justify-center gap-1 ${
+                      isSearching 
+                        ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                        : 'bg-gray-600 text-white hover:bg-gray-700'
+                    }`}
+                  >
+                    <Search className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{isSearching ? 'SAIR' : 'BUSCAR'}</span>
+                  </button>
+                  <button
+                    onClick={onCreateNew}
+                    className="hidden sm:flex flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs sm:text-sm font-medium items-center justify-center gap-1"
+                  >
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">NOVO</span>
+                  </button>
+                </div>
+                
+                {/* Segunda linha de botões - BUSCAR e NOVO (apenas mobile) */}
+                <div className="flex gap-1 sm:hidden">
+                  <button
+                    onClick={handleSearch}
+                    className={`flex-1 min-w-[80px] px-2 py-1.5 rounded shadow-sm text-xs font-medium flex items-center justify-center gap-1 ${
+                      isSearching 
+                        ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                        : 'bg-gray-600 text-white hover:bg-gray-700'
+                    }`}
+                  >
+                    <Search className="w-3 h-3" />
+                    <span>LOCALIZAR</span>
+                  </button>
+                  <button
+                    onClick={onCreateNew}
+                    className="flex-1 min-w-[80px] px-2 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs font-medium flex items-center justify-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>ADICIONAR PACIENTE</span>
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -653,7 +679,7 @@ export default function PatientFormFileMaker({
 
       {/* Main Content */}
       <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto">
-        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6">
+        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6 pt-6 sm:pt-8">
           {/* Form Grid - FileMaker Style - Responsivo */}
           <div className="grid grid-cols-1 gap-4">
             {/* Main Column */}
@@ -814,17 +840,17 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Sexo */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
                     SEXO
                   </label>
-                  <div className="flex-1">
+                  <div className="flex-1 relative">
                     {isEditing ? (
                       <select
                         value={currentPatient.sexo || ''}
                         onChange={(e) => handleChange('sexo', e.target.value)}
                         aria-label="Sexo"
-                        className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                       >
                         <option value="">Selecione...</option>
                         <option value="M">M</option>
@@ -959,8 +985,8 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Convênio */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
                     CONVÊNIO
                   </label>
                   <div className="flex-1">
@@ -1080,8 +1106,8 @@ export default function PatientFormFileMaker({
               {/* Terceira Linha: Data Consulta, Convênio */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Subtipo Convênio */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
                     SUBTIPO
                   </label>
                   <div className="flex-1">
@@ -1344,8 +1370,8 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Resposta */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
                     RESPOSTA
                   </label>
                   <div className="flex-1">
@@ -1373,10 +1399,12 @@ export default function PatientFormFileMaker({
                       <option value="COMPARECEU">COMPARECEU</option>
                     </select>
                   ) : (
-                    <div className={`px-3 py-1.5 border border-gray-300 rounded font-semibold ${
-                      currentPatient.resposta === 'NÃO COMPARECEU' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                    <div className={`px-3 py-1.5 border border-gray-300 rounded font-semibold min-h-[38px] flex items-center ${
+                      currentPatient.resposta === 'NÃO COMPARECEU' ? 'bg-red-100 text-red-700' : 
+                      currentPatient.resposta === 'COMPARECEU' ? 'bg-green-100 text-green-700' : 
+                      'bg-white text-gray-400'
                     }`}>
-                      {currentPatient.resposta}
+                      {currentPatient.resposta || '\u00A0'}
                     </div>
                   )}
                   </div>
@@ -1458,8 +1486,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.telFixo}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[38px] flex items-center">
+                      {currentPatient.telFixo || '\u00A0'}
                     </div>
                   )}
                   </div>
@@ -1641,8 +1669,8 @@ export default function PatientFormFileMaker({
               {/* Sexta Linha: Resolvido, Classificação */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Resolvido */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
                     RESOLVIDO
                   </label>
                   <div className="flex-1">
@@ -1708,8 +1736,8 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.classificacao}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[38px] flex items-center">
+                      {currentPatient.classificacao || '\u00A0'}
                     </div>
                   )}
                   </div>

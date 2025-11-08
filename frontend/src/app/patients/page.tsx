@@ -217,7 +217,7 @@ export default function PatientsPage() {
 
         {/* Filter Bar - FileMaker Style */}
         <div className="bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-300 rounded-lg shadow-sm p-3 mb-6">
-          {/* Primeira linha - Dias e Meses (8 botões) */}
+          {/* Primeira linha - 7 DIAS até 9 MESES (5 em mobile, 8 em desktop) */}
           <div className="grid grid-cols-5 lg:grid-cols-8 gap-2 mb-2">
             <button
               onClick={() => filterByPeriod('7d')}
@@ -284,9 +284,11 @@ export default function PatientsPage() {
                 <span className="text-[10px]">MESES</span>
               </div>
             </button>
+            
+            {/* 12M, 15M, 18M - Aparecem na primeira linha em desktop, segunda em mobile */}
             <button
               onClick={() => filterByPeriod('12m')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === '12m'
                   ? 'bg-gradient-to-b from-emerald-400 to-emerald-500 text-white border-emerald-600 shadow-lg'
                   : 'bg-gradient-to-b from-emerald-100 to-emerald-200 text-emerald-800 border-emerald-300 hover:from-emerald-200 hover:to-emerald-300 shadow-sm'
@@ -299,7 +301,7 @@ export default function PatientsPage() {
             </button>
             <button
               onClick={() => filterByPeriod('15m')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === '15m'
                   ? 'bg-gradient-to-b from-green-400 to-green-500 text-white border-green-600 shadow-lg'
                   : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
@@ -312,7 +314,7 @@ export default function PatientsPage() {
             </button>
             <button
               onClick={() => filterByPeriod('18m')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === '18m'
                   ? 'bg-gradient-to-b from-lime-400 to-lime-500 text-white border-lime-600 shadow-lg'
                   : 'bg-gradient-to-b from-lime-100 to-lime-200 text-lime-800 border-lime-300 hover:from-lime-200 hover:to-lime-300 shadow-sm'
@@ -325,8 +327,49 @@ export default function PatientsPage() {
             </button>
           </div>
 
-          {/* Segunda linha - Anos, TODOS e STATUS */}
+          {/* Segunda linha - 12M, 15M, 18M, 2 ANOS, 3 ANOS (mobile) / 2-5 ANOS (desktop) */}
           <div className="grid grid-cols-5 lg:grid-cols-8 gap-2 mb-2">
+            {/* 12M, 15M, 18M - Aparecem na segunda linha em mobile */}
+            <button
+              onClick={() => filterByPeriod('12m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all lg:hidden ${
+                activeFilter === '12m'
+                  ? 'bg-gradient-to-b from-emerald-400 to-emerald-500 text-white border-emerald-600 shadow-lg'
+                  : 'bg-gradient-to-b from-emerald-100 to-emerald-200 text-emerald-800 border-emerald-300 hover:from-emerald-200 hover:to-emerald-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">12</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('15m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all lg:hidden ${
+                activeFilter === '15m'
+                  ? 'bg-gradient-to-b from-green-400 to-green-500 text-white border-green-600 shadow-lg'
+                  : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">15</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('18m')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all lg:hidden ${
+                activeFilter === '18m'
+                  ? 'bg-gradient-to-b from-lime-400 to-lime-500 text-white border-lime-600 shadow-lg'
+                  : 'bg-gradient-to-b from-lime-100 to-lime-200 text-lime-800 border-lime-300 hover:from-lime-200 hover:to-lime-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">18</span>
+                <span className="text-[10px]">MESES</span>
+              </div>
+            </button>
+            
             <button
               onClick={() => filterByPeriod('2y')}
               className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
@@ -355,7 +398,7 @@ export default function PatientsPage() {
             </button>
             <button
               onClick={() => filterByPeriod('4y')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === '4y'
                   ? 'bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 text-white border-fuchsia-600 shadow-lg'
                   : 'bg-gradient-to-b from-fuchsia-100 to-fuchsia-200 text-fuchsia-800 border-fuchsia-300 hover:from-fuchsia-200 hover:to-fuchsia-300 shadow-sm'
@@ -368,7 +411,7 @@ export default function PatientsPage() {
             </button>
             <button
               onClick={() => filterByPeriod('5y')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === '5y'
                   ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white border-pink-600 shadow-lg'
                   : 'bg-gradient-to-b from-pink-100 to-pink-200 text-pink-800 border-pink-300 hover:from-pink-200 hover:to-pink-300 shadow-sm'
@@ -381,7 +424,7 @@ export default function PatientsPage() {
             </button>
             
             {/* Botão > 6 ANOS com Popover */}
-            <div className="relative">
+            <div className="relative hidden lg:block">
               <button
                 onClick={() => setShowYearsPopover(!showYearsPopover)}
                 className={`w-full px-2 py-1.5 rounded border text-xs font-bold transition-all ${
@@ -479,10 +522,10 @@ export default function PatientsPage() {
               )}
             </div>
 
-            {/* Botão Todos */}
+            {/* Botão Todos - Desktop */}
             <button
               onClick={() => filterByPeriod('all')}
-              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all hidden lg:block ${
                 activeFilter === 'all'
                   ? 'bg-gradient-to-b from-green-500 to-green-600 text-white border-green-700 shadow-lg'
                   : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
@@ -494,8 +537,8 @@ export default function PatientsPage() {
               </div>
             </button>
             
-            {/* Botão Filtro de Status */}
-            <div className="relative h-full">
+            {/* Botão Filtro de Status - Desktop */}
+            <div className="relative h-full hidden lg:block">
               <button
                 onClick={() => {
                   console.log('Clicou no botão STATUS, estado atual:', showStatusPopover);
@@ -840,7 +883,89 @@ export default function PatientsPage() {
             </div>
           </div>
 
-          {/* Terceira linha - Contador de Registros (apenas mobile) */}
+          {/* Terceira linha - 4 ANOS, 5 ANOS, > 6 ANOS, TODOS, STATUS (apenas mobile) */}
+          <div className="grid grid-cols-5 gap-2 mb-2 lg:hidden">
+            <button
+              onClick={() => filterByPeriod('4y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '4y'
+                  ? 'bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 text-white border-fuchsia-600 shadow-lg'
+                  : 'bg-gradient-to-b from-fuchsia-100 to-fuchsia-200 text-fuchsia-800 border-fuchsia-300 hover:from-fuchsia-200 hover:to-fuchsia-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">4</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            <button
+              onClick={() => filterByPeriod('5y')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === '5y'
+                  ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white border-pink-600 shadow-lg'
+                  : 'bg-gradient-to-b from-pink-100 to-pink-200 text-pink-800 border-pink-300 hover:from-pink-200 hover:to-pink-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-lg font-bold">5</span>
+                <span className="text-[10px]">ANOS</span>
+              </div>
+            </button>
+            
+            {/* > 6 ANOS com popover - Mobile */}
+            <div className="relative">
+              <button
+                onClick={() => setShowYearsPopover(!showYearsPopover)}
+                className={`w-full px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                  activeFilter === '6y+' || activeFilter === '6y' || activeFilter === '7y' || activeFilter === '8y' || activeFilter === '9y' || activeFilter === '10y'
+                    ? 'bg-gradient-to-b from-red-500 to-red-600 text-white border-red-700 shadow-lg'
+                    : 'bg-gradient-to-b from-red-100 to-red-200 text-red-800 border-red-300 hover:from-red-200 hover:to-red-300 shadow-sm'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-lg font-bold">&gt; 6</span>
+                  <span className="text-[10px]">ANOS</span>
+                </div>
+              </button>
+            </div>
+            
+            {/* Botão Todos - Mobile */}
+            <button
+              onClick={() => filterByPeriod('all')}
+              className={`min-w-[60px] px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                activeFilter === 'all'
+                  ? 'bg-gradient-to-b from-green-500 to-green-600 text-white border-green-700 shadow-lg'
+                  : 'bg-gradient-to-b from-green-100 to-green-200 text-green-800 border-green-300 hover:from-green-200 hover:to-green-300 shadow-sm'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <BarChart3 className="w-6 h-6" />
+                <span className="text-[10px]">TODOS</span>
+              </div>
+            </button>
+            
+            {/* Botão Filtro de Status - Mobile */}
+            <div className="relative h-full">
+              <button
+                onClick={() => {
+                  console.log('Clicou no botão STATUS, estado atual:', showStatusPopover);
+                  setShowStatusPopover(!showStatusPopover);
+                }}
+                className={`w-full h-full px-2 py-1.5 rounded border text-xs font-bold transition-all ${
+                  statusFilter
+                    ? 'bg-gradient-to-b from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg'
+                    : 'bg-gradient-to-b from-blue-100 to-blue-200 text-blue-800 border-blue-300 hover:from-blue-200 hover:to-blue-300 shadow-sm'
+                }`}
+              >
+                <div className="flex flex-col items-center justify-center gap-0.5 h-full">
+                  <Filter className="w-6 h-6" />
+                  <span className="text-[10px]">STATUS</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Quarta linha - Contador de Registros (apenas mobile) */}
           <div className="flex justify-center lg:hidden mt-2">
             <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-white border border-gray-400 rounded shadow-sm">
               <TrendingUp className="w-4 h-4 text-blue-600" />
