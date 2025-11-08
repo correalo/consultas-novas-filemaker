@@ -927,6 +927,88 @@ export default function PatientsPage() {
                   <span className="text-[10px]">ANOS</span>
                 </div>
               </button>
+              
+              {/* Popover com anos individuais - Mobile */}
+              {showYearsPopover && (
+                <>
+                  {/* Overlay para fechar ao clicar fora */}
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setShowYearsPopover(false)}
+                  ></div>
+                  
+                  {/* Popover */}
+                  <div className="absolute top-full left-0 mt-2 z-20 bg-white border-2 border-gray-400 rounded-lg shadow-xl p-2 min-w-[200px]">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => {
+                          filterByPeriod('6y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '6y'
+                            ? 'bg-gradient-to-b from-rose-400 to-rose-500 text-white border-rose-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        6 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('7y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '7y'
+                            ? 'bg-gradient-to-b from-indigo-400 to-indigo-500 text-white border-indigo-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        7 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('8y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '8y'
+                            ? 'bg-gradient-to-b from-sky-400 to-sky-500 text-white border-sky-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        8 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('9y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '9y'
+                            ? 'bg-gradient-to-b from-slate-400 to-slate-500 text-white border-slate-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        9 ANOS
+                      </button>
+                      <button
+                        onClick={() => {
+                          filterByPeriod('10y');
+                          setShowYearsPopover(false);
+                        }}
+                        className={`w-full px-4 py-2 rounded border text-sm font-bold transition-all text-left ${
+                          activeFilter === '10y'
+                            ? 'bg-gradient-to-b from-gray-400 to-gray-500 text-white border-gray-600 shadow-md'
+                            : 'bg-gradient-to-b from-white to-gray-50 text-gray-700 border-gray-300 hover:from-gray-50 hover:to-gray-100'
+                        }`}
+                      >
+                        10 ANOS
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             
             {/* Botão Todos - Mobile */}
@@ -962,6 +1044,319 @@ export default function PatientsPage() {
                   <span className="text-[10px]">STATUS</span>
                 </div>
               </button>
+              
+              {/* Popover com filtros de status - Mobile */}
+              {showStatusPopover && (
+                <>
+                  {/* Overlay para fechar ao clicar fora */}
+                  <div 
+                    className="fixed inset-0 z-[100]" 
+                    onClick={() => {
+                      setShowStatusPopover(false);
+                    }}
+                  ></div>
+                  
+                  {/* Popover - Mobile com scroll horizontal */}
+                  <div className="absolute top-full right-0 mt-2 z-[101] bg-white border-2 border-gray-400 rounded-lg shadow-2xl p-2 w-[90vw] max-w-[650px] max-h-[70vh] overflow-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 min-w-[550px]">
+                      {/* Coluna 1: 2026-2022 (5 anos) */}
+                      <div className="space-y-1">
+                        {/* 2026 - Roxo */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2026', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2026', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2026', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2026', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2026', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2026', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-purple-200 to-purple-300 text-purple-900 border-purple-400 hover:from-purple-300 hover:to-purple-400 text-left">
+                            2026 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2025 - Verde */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2025', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2025', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2025', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2025', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2025', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2025', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-green-200 to-green-300 text-green-900 border-green-400 hover:from-green-300 hover:to-green-400 text-left">
+                            2025 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2024 - Azul Claro */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2024', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2024', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2024', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2024', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2024', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2024', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-cyan-200 to-cyan-300 text-cyan-900 border-cyan-400 hover:from-cyan-300 hover:to-cyan-400 text-left">
+                            2024 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2023 - Verde Escuro */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2023', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2023', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2023', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2023', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2023', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2023', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-emerald-200 to-emerald-300 text-emerald-900 border-emerald-400 hover:from-emerald-300 hover:to-emerald-400 text-left">
+                            2023 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2022 - Amarelo */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2022', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2022', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2022', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2022', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2022', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2022', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2022 LIMBO
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Coluna 2: 2021-2017 (5 anos) */}
+                      <div className="space-y-1">
+                        {/* 2021 - Rosa */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2021', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2021', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2021', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2021', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2021', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2021', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-pink-200 to-pink-300 text-pink-900 border-pink-400 hover:from-pink-300 hover:to-pink-400 text-left">
+                            2021 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2020 - Vermelho */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2020', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2020', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2020', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2020', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2020', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2020', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-red-200 to-red-300 text-red-900 border-red-400 hover:from-red-300 hover:to-red-400 text-left">
+                            2020 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2019 - Âmbar */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2019', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2019', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2019', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2019', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2019', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2019', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-amber-200 to-amber-300 text-amber-900 border-amber-400 hover:from-amber-300 hover:to-amber-400 text-left">
+                            2019 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2018 - Cinza */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2018', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2018', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2018', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2018', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2018', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2018', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-gray-200 to-gray-300 text-gray-900 border-gray-400 hover:from-gray-300 hover:to-gray-400 text-left">
+                            2018 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2017 - Amarelo */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2017', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2017', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2017', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2017', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2017', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2017', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-yellow-200 to-yellow-300 text-yellow-900 border-yellow-400 hover:from-yellow-300 hover:to-yellow-400 text-left">
+                            2017 LIMBO
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Coluna 3: 2016-2014 */}
+                      <div className="space-y-1">
+                        {/* 2016 - Laranja */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2016', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2016', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2016', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2016', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2016', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2016', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-orange-200 to-orange-300 text-orange-900 border-orange-400 hover:from-orange-300 hover:to-orange-400 text-left">
+                            2016 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2015 - Azul */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2015', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2015', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2015', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2015', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2015', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2015', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-blue-200 to-blue-300 text-blue-900 border-blue-400 hover:from-blue-300 hover:to-blue-400 text-left">
+                            2015 LIMBO
+                          </button>
+                        </div>
+                        
+                        {/* 2014 - Índigo */}
+                        <div className="space-y-1">
+                          <button onClick={() => filterByStatus('2014', 'OPERADO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 OPERADO
+                          </button>
+                          <button onClick={() => filterByStatus('2014', 'COMPARECEU NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 COMPARECEU NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2014', 'DESISTIU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 DESISTIU
+                          </button>
+                          <button onClick={() => filterByStatus('2014', 'NÃO COMPARECEU')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 NÃO COMPARECEU
+                          </button>
+                          <button onClick={() => filterByStatus('2014', 'PARTICULAR NÃO OP')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 PARTICULAR NÃO OP
+                          </button>
+                          <button onClick={() => filterByStatus('2014', 'LIMBO')} className="w-full px-3 py-2 rounded border text-xs font-bold bg-gradient-to-b from-indigo-200 to-indigo-300 text-indigo-900 border-indigo-400 hover:from-indigo-300 hover:to-indigo-400 text-left">
+                            2014 LIMBO
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
