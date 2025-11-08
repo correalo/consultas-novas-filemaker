@@ -6,6 +6,323 @@ import { patientService } from '@/services/patientService';
 import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus, Calendar } from 'lucide-react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import CustomSelect from './CustomSelect';
+
+// Opções para os selects
+const CONVENIO_OPTIONS = [
+  { value: '', label: 'Selecione...' },
+  { value: 'PARTICULAR', label: 'PARTICULAR' },
+  { value: 'SULAMERICA', label: 'SULAMERICA' },
+  { value: 'BRADESCO', label: 'BRADESCO' },
+  { value: 'ABET', label: 'ABET' },
+  { value: 'ALLIANZ', label: 'ALLIANZ' },
+  { value: 'AMEPLAN', label: 'AMEPLAN' },
+  { value: 'AMIL', label: 'AMIL' },
+  { value: 'AMAFRESP', label: 'AMAFRESP' },
+  { value: 'CABESP', label: 'CABESP' },
+  { value: 'CARE PLUS', label: 'CARE PLUS' },
+  { value: 'CASSI', label: 'CASSI' },
+  { value: 'CET', label: 'CET' },
+  { value: 'CLASSES LABORIOSAS', label: 'CLASSES LABORIOSAS' },
+  { value: 'CUIDAR ME', label: 'CUIDAR ME' },
+  { value: 'ECONOMUS', label: 'ECONOMUS' },
+  { value: 'EMBRATEL', label: 'EMBRATEL' },
+  { value: 'FUNDACAO CESP', label: 'FUNDACAO CESP' },
+  { value: 'GAMA', label: 'GAMA' },
+  { value: 'GEAP', label: 'GEAP' },
+  { value: 'GOLDEN CROSS', label: 'GOLDEN CROSS' },
+  { value: 'GREEN LINE', label: 'GREEN LINE' },
+  { value: 'INTERMEDICA', label: 'INTERMEDICA' },
+  { value: 'ITAU', label: 'ITAU' },
+  { value: 'NOTRE DAME', label: 'NOTRE DAME' },
+  { value: 'MARITIMA', label: 'MARITIMA' },
+  { value: 'MEDIAL', label: 'MEDIAL' },
+  { value: 'MEDISERVICE', label: 'MEDISERVICE' },
+  { value: 'METRUS', label: 'METRUS' },
+  { value: 'OMINT', label: 'OMINT' },
+  { value: 'ONE HEALTH', label: 'ONE HEALTH' },
+  { value: 'PORTO SEGURO', label: 'PORTO SEGURO' },
+  { value: 'POSTAL SAUDE', label: 'POSTAL SAUDE' },
+  { value: 'SABESPREV', label: 'SABESPREV' },
+  { value: 'SAUDE CAIXA', label: 'SAUDE CAIXA' },
+  { value: 'SOMPO SAÚDE', label: 'SOMPO SAÚDE' },
+  { value: 'TRASMONTANO', label: 'TRASMONTANO' },
+  { value: 'UNIMED', label: 'UNIMED' },
+  { value: 'UNIMED CENTRAL NACIONAL', label: 'UNIMED CENTRAL NACIONAL' },
+  { value: 'UNIMED FESP', label: 'UNIMED FESP' },
+  { value: 'UNIMED GUARULHOS', label: 'UNIMED GUARULHOS' },
+  { value: 'UNIMED SEGUROS', label: 'UNIMED SEGUROS' },
+  { value: 'VOLKSWAGEN', label: 'VOLKSWAGEN' },
+  { value: 'OUTROS', label: 'OUTROS' },
+];
+
+const CONVENIO_SEARCH_OPTIONS = [
+  { value: '', label: 'Todos...' },
+  ...CONVENIO_OPTIONS.slice(1)
+];
+
+const RESPOSTA_OPTIONS = [
+  { value: '', label: 'Selecione...' },
+  { value: 'NÃO COMPARECEU', label: 'NÃO COMPARECEU' },
+  { value: 'COMPARECEU', label: 'COMPARECEU' },
+  { value: 'CONFIRMADO', label: 'CONFIRMADO' },
+  { value: 'RETORNAR', label: 'RETORNAR' },
+  { value: 'REMARCAR', label: 'REMARCAR' },
+  { value: 'CANCELADO', label: 'CANCELADO' },
+];
+
+const RESPOSTA_SEARCH_OPTIONS = [
+  { value: '', label: 'Todas...' },
+  ...RESPOSTA_OPTIONS.slice(1)
+];
+
+const RESOLVIDO_OPTIONS = [
+  { value: '', label: 'Selecione...' },
+  { value: 'SIM', label: 'SIM' },
+  { value: 'NÃO', label: 'NÃO' },
+  { value: 'LIMBO', label: 'LIMBO' },
+];
+
+const RESOLVIDO_SEARCH_OPTIONS = [
+  { value: '', label: 'Todos...' },
+  ...RESOLVIDO_OPTIONS.slice(1)
+];
+
+const SUBTIPO_OPTIONS = [
+  { value: '', label: 'Selecione...' },
+  { value: 'AMIL 140 PLUS', label: 'AMIL 140 PLUS' },
+  { value: 'AMIL 160', label: 'AMIL 160' },
+  { value: 'AMIL BLUE I', label: 'AMIL BLUE I' },
+  { value: 'AMIL BLUE II', label: 'AMIL BLUE II' },
+  { value: 'AMIL GLOBAL I', label: 'AMIL GLOBAL I' },
+  { value: 'AMIL 30', label: 'AMIL 30' },
+  { value: 'AMIL 40', label: 'AMIL 40' },
+  { value: 'AMIL 200', label: 'AMIL 200' },
+  { value: 'AMIL 300', label: 'AMIL 300' },
+  { value: 'AMIL 400', label: 'AMIL 400' },
+  { value: 'AMIL 500', label: 'AMIL 500' },
+  { value: 'AMIL 700', label: 'AMIL 700' },
+  { value: 'AMIL BLUE GOLD', label: 'AMIL BLUE GOLD' },
+  { value: 'AMIL FACIL S60 SP', label: 'AMIL FACIL S60 SP' },
+  { value: 'AMIL COLABORADOR', label: 'AMIL COLABORADOR' },
+  { value: 'AMIL ORIENTADOR 40', label: 'AMIL ORIENTADOR 40' },
+  { value: 'AMIL ORIENTADOR 140', label: 'AMIL ORIENTADOR 140' },
+  { value: 'AMIL NEXT MUN SAO PAULO', label: 'AMIL NEXT MUN SAO PAULO' },
+  { value: 'AMIL QUALITE M22', label: 'AMIL QUALITE M22' },
+  { value: 'AMIL ONE S1500', label: 'AMIL ONE S1500' },
+  { value: 'AMIL ONE S2500', label: 'AMIL ONE S2500' },
+  { value: 'AMIL OPCAO M22', label: 'AMIL OPCAO M22' },
+  { value: 'AMIL SANTA PAULA', label: 'AMIL SANTA PAULA' },
+  { value: 'AMIL S40', label: 'AMIL S40' },
+  { value: 'AMIL S80', label: 'AMIL S80' },
+  { value: 'AMIL S250', label: 'AMIL S250' },
+  { value: 'AMIL S350', label: 'AMIL S350' },
+  { value: 'AMIL S450', label: 'AMIL S450' },
+  { value: 'AMIL S580', label: 'AMIL S580' },
+  { value: 'AMIL S750', label: 'AMIL S750' },
+  { value: 'ABSOLUTO', label: 'ABSOLUTO' },
+  { value: 'ACESSO IV', label: 'ACESSO IV' },
+  { value: 'ADVANCE 600', label: 'ADVANCE 600' },
+  { value: 'ADVANCE 700', label: 'ADVANCE 700' },
+  { value: 'ADVANCE 800', label: 'ADVANCE 800' },
+  { value: 'AGREGADO', label: 'AGREGADO' },
+  { value: 'AMPLA COLETIVO', label: 'AMPLA COLETIVO' },
+  { value: 'ASSOCIADOS', label: 'ASSOCIADOS' },
+  { value: 'ATIVOS', label: 'ATIVOS' },
+  { value: 'BASICO', label: 'BASICO' },
+  { value: 'BASICO 10', label: 'BASICO 10' },
+  { value: 'BETA', label: 'BETA' },
+  { value: 'BLUE III', label: 'BLUE III' },
+  { value: 'BLUE IV', label: 'BLUE IV' },
+  { value: 'BLUE 300', label: 'BLUE 300' },
+  { value: 'BLUE 300 PLUS', label: 'BLUE 300 PLUS' },
+  { value: 'BLUE 400', label: 'BLUE 400' },
+  { value: 'BLUE 400 PLUS', label: 'BLUE 400 PLUS' },
+  { value: 'BLUE 500', label: 'BLUE 500' },
+  { value: 'BLUE 500 PLUS', label: 'BLUE 500 PLUS' },
+  { value: 'BLUE 600', label: 'BLUE 600' },
+  { value: 'BLUE 600 PLUS', label: 'BLUE 600 PLUS' },
+  { value: 'BLUE 700', label: 'BLUE 700' },
+  { value: 'BLUE 800', label: 'BLUE 800' },
+  { value: 'BLUE EXECUTIVO', label: 'BLUE EXECUTIVO' },
+  { value: 'BRANCO', label: 'BRANCO' },
+  { value: 'BRANCO SL', label: 'BRANCO SL' },
+  { value: 'BRANCO 100', label: 'BRANCO 100' },
+  { value: 'BRANCO 150', label: 'BRANCO 150' },
+  { value: 'BRONZE', label: 'BRONZE' },
+  { value: 'BRONZE I', label: 'BRONZE I' },
+  { value: 'BRONZE TOP', label: 'BRONZE TOP' },
+  { value: 'CABESP FAMILIA', label: 'CABESP FAMILIA' },
+  { value: 'CELEBRITY', label: 'CELEBRITY' },
+  { value: 'CENTRAL NACIONAL', label: 'CENTRAL NACIONAL' },
+  { value: 'CLASS 620 E', label: 'CLASS 620 E' },
+  { value: 'CLASS 620 A', label: 'CLASS 620 A' },
+  { value: 'CLASS 640 A', label: 'CLASS 640 A' },
+  { value: 'CLASSICO', label: 'CLASSICO' },
+  { value: 'COLETIVO EMPRESARIAL', label: 'COLETIVO EMPRESARIAL' },
+  { value: 'COMPLETO', label: 'COMPLETO' },
+  { value: 'CORPORATIVO COMPLETO', label: 'CORPORATIVO COMPLETO' },
+  { value: 'CORREIOS SAUDE', label: 'CORREIOS SAUDE' },
+  { value: 'CRISTAL I', label: 'CRISTAL I' },
+  { value: 'D', label: 'D' },
+  { value: 'DIAMANTE I', label: 'DIAMANTE I' },
+  { value: 'DIAMANTE I 876', label: 'DIAMANTE I 876' },
+  { value: 'DINAMICO', label: 'DINAMICO' },
+  { value: 'DSP CLINIC', label: 'DSP CLINIC' },
+  { value: 'DSP PLENA', label: 'DSP PLENA' },
+  { value: 'DIX 10', label: 'DIX 10' },
+  { value: 'DIX ORIENTADOR', label: 'DIX ORIENTADOR' },
+  { value: 'DIX 100', label: 'DIX 100' },
+  { value: 'EFETIVO IV', label: 'EFETIVO IV' },
+  { value: 'ELETROPAULO', label: 'ELETROPAULO' },
+  { value: 'ESSENCIAL', label: 'ESSENCIAL' },
+  { value: 'ESSENCIAL PLUS', label: 'ESSENCIAL PLUS' },
+  { value: 'ESPECIAL', label: 'ESPECIAL' },
+  { value: 'ESPECIAL I', label: 'ESPECIAL I' },
+  { value: 'ESPECIAL II', label: 'ESPECIAL II' },
+  { value: 'ESPECIAL III', label: 'ESPECIAL III' },
+  { value: 'ESPECIAL 100', label: 'ESPECIAL 100' },
+  { value: 'ESTILO I', label: 'ESTILO I' },
+  { value: 'ESTILO III', label: 'ESTILO III' },
+  { value: 'ES07 ESPECIAL', label: 'ES07 ESPECIAL' },
+  { value: 'EXATO', label: 'EXATO' },
+  { value: 'EXCELLENCE', label: 'EXCELLENCE' },
+  { value: 'EXECUTIVE', label: 'EXECUTIVE' },
+  { value: 'EXECUTIVO', label: 'EXECUTIVO' },
+  { value: 'EXCLUSIVO', label: 'EXCLUSIVO' },
+  { value: 'FAMILIA', label: 'FAMILIA' },
+  { value: 'FAMILA AGREGADO', label: 'FAMILA AGREGADO' },
+  { value: 'FESP', label: 'FESP' },
+  { value: 'FIT', label: 'FIT' },
+  { value: 'FLEX', label: 'FLEX' },
+  { value: 'GREEN 211', label: 'GREEN 211' },
+  { value: 'H2L2R2ED', label: 'H2L2R2ED' },
+  { value: 'H3L2', label: 'H3L2' },
+  { value: 'IDEAL ENFERMARIA', label: 'IDEAL ENFERMARIA' },
+  { value: 'INFINITY 1000', label: 'INFINITY 1000' },
+  { value: 'INTEGRADA', label: 'INTEGRADA' },
+  { value: 'LIDER', label: 'LIDER' },
+  { value: 'LIFE STD', label: 'LIFE STD' },
+  { value: 'LT3', label: 'LT3' },
+  { value: 'LT4', label: 'LT4' },
+  { value: 'MASTER', label: 'MASTER' },
+  { value: 'MASTER I', label: 'MASTER I' },
+  { value: 'MASTER II', label: 'MASTER II' },
+  { value: 'MASTER III', label: 'MASTER III' },
+  { value: 'MASTER IV', label: 'MASTER IV' },
+  { value: 'MAX 250', label: 'MAX 250' },
+  { value: 'MAX 300', label: 'MAX 300' },
+  { value: 'MAX 350', label: 'MAX 350' },
+  { value: 'MAX 400', label: 'MAX 400' },
+  { value: 'MAXI', label: 'MAXI' },
+  { value: 'MAXIMO', label: 'MAXIMO' },
+  { value: 'MEDIAL 200', label: 'MEDIAL 200' },
+  { value: 'MEDIAL CLASS 620', label: 'MEDIAL CLASS 620' },
+  { value: 'MEDIAL 31', label: 'MEDIAL 31' },
+  { value: 'MEDIAL 400', label: 'MEDIAL 400' },
+  { value: 'MEDIAL 840 A', label: 'MEDIAL 840 A' },
+  { value: 'MEDIAL ESTRELAS 31', label: 'MEDIAL ESTRELAS 31' },
+  { value: 'MEDIAL EXECUTIVE PLUS', label: 'MEDIAL EXECUTIVE PLUS' },
+  { value: 'MEDIAL INTER II NAC PJCE', label: 'MEDIAL INTER II NAC PJCE' },
+  { value: 'MEDIAL GOL', label: 'MEDIAL GOL' },
+  { value: 'MEDIAL IDEAL 420 A', label: 'MEDIAL IDEAL 420 A' },
+  { value: 'MEDIAL ORIENTADOR CLASS 30', label: 'MEDIAL ORIENTADOR CLASS 30' },
+  { value: 'MEDIAL PLENO II', label: 'MEDIAL PLENO II' },
+  { value: 'MEDIAL PREMIUM 840A', label: 'MEDIAL PREMIUM 840A' },
+  { value: 'MEDICUS M22', label: 'MEDICUS M22' },
+  { value: 'MEDICUS 122', label: 'MEDICUS 122' },
+  { value: 'MELHOR', label: 'MELHOR' },
+  { value: 'MSI', label: 'MSI' },
+  { value: 'NDS 111', label: 'NDS 111' },
+  { value: 'NDS 126', label: 'NDS 126' },
+  { value: 'NDS 127', label: 'NDS 127' },
+  { value: 'NDS 130', label: 'NDS 130' },
+  { value: 'NDS 140', label: 'NDS 140' },
+  { value: 'NDS 141', label: 'NDS 141' },
+  { value: 'NDS 161', label: 'NDS 161' },
+  { value: 'ONE BLACK T2', label: 'ONE BLACK T2' },
+  { value: 'ONE BLACK T3', label: 'ONE BLACK T3' },
+  { value: 'ONE 2000', label: 'ONE 2000' },
+  { value: 'OPCAO M22', label: 'OPCAO M22' },
+  { value: 'OPCAO 122', label: 'OPCAO 122' },
+  { value: 'ORIGINAL', label: 'ORIGINAL' },
+  { value: 'OSWALDO CRUZ 100', label: 'OSWALDO CRUZ 100' },
+  { value: 'OURO', label: 'OURO' },
+  { value: 'OURO I', label: 'OURO I' },
+  { value: 'OURO III', label: 'OURO III' },
+  { value: 'OURO IV', label: 'OURO IV' },
+  { value: 'OURO MAIS Q', label: 'OURO MAIS Q' },
+  { value: 'OURO MAX Q', label: 'OURO MAX Q' },
+  { value: 'PADRAO', label: 'PADRAO' },
+  { value: 'PLENO', label: 'PLENO' },
+  { value: 'PLENO II 920', label: 'PLENO II 920' },
+  { value: 'PLUS', label: 'PLUS' },
+  { value: 'PME COMPACTO', label: 'PME COMPACTO' },
+  { value: 'PORTO MED I', label: 'PORTO MED I' },
+  { value: 'PRATA', label: 'PRATA' },
+  { value: 'PRATA BRONZE COPAR Q', label: 'PRATA BRONZE COPAR Q' },
+  { value: 'PRATA E MAIS', label: 'PRATA E MAIS' },
+  { value: 'PRATA MAIS Q', label: 'PRATA MAIS Q' },
+  { value: 'PRATA I', label: 'PRATA I' },
+  { value: 'PRATA TOP', label: 'PRATA TOP' },
+  { value: 'PREMIUM', label: 'PREMIUM' },
+  { value: 'PREMIUM TOP', label: 'PREMIUM TOP' },
+  { value: 'PREMIUM 800', label: 'PREMIUM 800' },
+  { value: 'PREMIUM 900', label: 'PREMIUM 900' },
+  { value: 'QUALITE', label: 'QUALITE' },
+  { value: 'REDE 300', label: 'REDE 300' },
+  { value: 'REFE EFETIVO', label: 'REFE EFETIVO' },
+  { value: 'REDE EFETIVO III', label: 'REDE EFETIVO III' },
+  { value: 'REDE EFETIVO IV', label: 'REDE EFETIVO IV' },
+  { value: 'REDE HSC IDEAL', label: 'REDE HSC IDEAL' },
+  { value: 'REDE HSC NACIONAL', label: 'REDE HSC NACIONAL' },
+  { value: 'REDE IDEAL I', label: 'REDE IDEAL I' },
+  { value: 'REDE LIVRE ESCOLHA', label: 'REDE LIVRE ESCOLHA' },
+  { value: 'REDE PERFIL SP', label: 'REDE PERFIL SP' },
+  { value: 'REDE PERSONAL IV', label: 'REDE PERSONAL IV' },
+  { value: 'REDE PREFERENCIAL', label: 'REDE PREFERENCIAL' },
+  { value: 'REDE PREFERENCIAL PLUS', label: 'REDE PREFERENCIAL PLUS' },
+  { value: 'REDE INTERNACIONAL', label: 'REDE INTERNACIONAL' },
+  { value: 'REDE NACIONAL INDIVIDUAL', label: 'REDE NACIONAL INDIVIDUAL' },
+  { value: 'REDE NACIONAL EMPRESARIAL', label: 'REDE NACIONAL EMPRESARIAL' },
+  { value: 'REDE NACIONAL EMPRESARIAL SPG', label: 'REDE NACIONAL EMPRESARIAL SPG' },
+  { value: 'REDE NACIONAL ESPECIAL', label: 'REDE NACIONAL ESPECIAL' },
+  { value: 'REDE NACIONAL FLEX', label: 'REDE NACIONAL FLEX' },
+  { value: 'REDE NACIONAL FLEX II', label: 'REDE NACIONAL FLEX II' },
+  { value: 'REDE NACIONAL PLUS', label: 'REDE NACIONAL PLUS' },
+  { value: 'REDE PERSONAL VI', label: 'REDE PERSONAL VI' },
+  { value: 'REDE SCANIA', label: 'REDE SCANIA' },
+  { value: 'REDE SIEMENS', label: 'REDE SIEMENS' },
+  { value: 'REGIONAL', label: 'REGIONAL' },
+  { value: 'SAUDE CAIXA ATIVOS', label: 'SAUDE CAIXA ATIVOS' },
+  { value: 'SEGUROS UNIMED HCOR', label: 'SEGUROS UNIMED HCOR' },
+  { value: 'SELETO I', label: 'SELETO I' },
+  { value: 'SENIOR I', label: 'SENIOR I' },
+  { value: 'SENIOR II 920', label: 'SENIOR II 920' },
+  { value: 'SKILL', label: 'SKILL' },
+  { value: 'SMART 200', label: 'SMART 200' },
+  { value: 'SMART 300', label: 'SMART 300' },
+  { value: 'SMART 400', label: 'SMART 400' },
+  { value: 'SMART 500', label: 'SMART 500' },
+  { value: 'SMART 600', label: 'SMART 600' },
+  { value: 'STANDARD', label: 'STANDARD' },
+  { value: 'SUPERIEUR', label: 'SUPERIEUR' },
+  { value: 'SUPERIOR NACIONAL', label: 'SUPERIOR NACIONAL' },
+  { value: 'SUPREMO', label: 'SUPREMO' },
+  { value: 'S 450', label: 'S 450' },
+  { value: 'S 750', label: 'S 750' },
+  { value: 'UNIPLAN INTEGRADA', label: 'UNIPLAN INTEGRADA' },
+  { value: 'UNIPLAN PADRÃO', label: 'UNIPLAN PADRÃO' },
+  { value: 'UNIPLAN SUPREMO', label: 'UNIPLAN SUPREMO' },
+  { value: 'UNIPLAN UP OURO', label: 'UNIPLAN UP OURO' },
+  { value: 'UNIPLAN UP BRONZE', label: 'UNIPLAN UP BRONZE' },
+  { value: 'UNIPLAN', label: 'UNIPLAN' },
+  { value: 'UNIPLAN NEW PRATA', label: 'UNIPLAN NEW PRATA' },
+  { value: 'VERSATIL', label: 'VERSATIL' },
+  { value: 'VITA', label: 'VITA' },
+  { value: 'UNIPLAN ESPECIAL', label: 'UNIPLAN ESPECIAL' },
+  { value: 'UNIPLAN MASTERAMIL', label: 'UNIPLAN MASTERAMIL' },
+];
 
 interface ToDo {
   id: string;
@@ -370,7 +687,7 @@ export default function PatientFormFileMaker({
   };
 
   return (
-    <div className="bg-[#e8e8e8] min-h-screen">
+    <div className="bg-[#e8e8e8] min-h-screen overflow-visible !transform-none">
       {/* Header Bar - FileMaker Style - Responsivo */}
       <div className="bg-gradient-to-b from-[#d0d0d0] to-[#b8b8b8] border-b border-gray-400 px-2 sm:px-4 py-2">
         {/* Mobile/Tablet: Stack vertical */}
@@ -678,8 +995,8 @@ export default function PatientFormFileMaker({
       </div>
 
       {/* Main Content */}
-      <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto">
-        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6 pt-6 sm:pt-8">
+      <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto mt-20 overflow-visible !transform-none">
+        <div className="bg-gray-200 rounded-lg shadow-lg border border-gray-300 p-3 sm:p-4 lg:p-6 overflow-visible !transform-none">
           {/* Form Grid - FileMaker Style - Responsivo */}
           <div className="grid grid-cols-1 gap-4">
             {/* Main Column */}
@@ -840,22 +1157,23 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Sexo */}
-                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     SEXO
                   </label>
                   <div className="flex-1 relative">
                     {isEditing ? (
-                      <select
+                      <CustomSelect
                         value={currentPatient.sexo || ''}
-                        onChange={(e) => handleChange('sexo', e.target.value)}
+                        onChange={(value) => handleChange('sexo', value)}
+                        options={[
+                          { value: '', label: 'Selecione...' },
+                          { value: 'M', label: 'M' },
+                          { value: 'F', label: 'F' }
+                        ]}
                         aria-label="Sexo"
-                        className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
-                      >
-                        <option value="">Selecione...</option>
-                        <option value="M">M</option>
-                        <option value="F">F</option>
-                      </select>
+                        className="border-gray-400 focus:ring-blue-500"
+                      />
                     ) : (
                       <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[34px]">
                         {currentPatient.sexo || '\u00A0'}
@@ -985,8 +1303,8 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Convênio */}
-                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     CONVÊNIO
                   </label>
                   <div className="flex-1">
@@ -1043,57 +1361,13 @@ export default function PatientFormFileMaker({
                       <option value="OUTROS">OUTROS</option>
                     </select>
                   ) : isEditing ? (
-                    <select
+                    <CustomSelect
                       value={currentPatient.convenio || ''}
-                      onChange={(e) => handleChange('convenio', e.target.value)}
+                      onChange={(value) => handleChange('convenio', value)}
+                      options={CONVENIO_OPTIONS}
                       aria-label="Convênio"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="PARTICULAR">PARTICULAR</option>
-                      <option value="SULAMERICA">SULAMERICA</option>
-                      <option value="BRADESCO">BRADESCO</option>
-                      <option value="ABET">ABET</option>
-                      <option value="ALLIANZ">ALLIANZ</option>
-                      <option value="AMEPLAN">AMEPLAN</option>
-                      <option value="AMIL">AMIL</option>
-                      <option value="AMAFRESP">AMAFRESP</option>
-                      <option value="CABESP">CABESP</option>
-                      <option value="CARE PLUS">CARE PLUS</option>
-                      <option value="CASSI">CASSI</option>
-                      <option value="CET">CET</option>
-                      <option value="CLASSES LABORIOSAS">CLASSES LABORIOSAS</option>
-                      <option value="CUIDAR ME">CUIDAR ME</option>
-                      <option value="ECONOMUS">ECONOMUS</option>
-                      <option value="EMBRATEL">EMBRATEL</option>
-                      <option value="FUNDACAO CESP">FUNDACAO CESP</option>
-                      <option value="GAMA">GAMA</option>
-                      <option value="GEAP">GEAP</option>
-                      <option value="GOLDEN CROSS">GOLDEN CROSS</option>
-                      <option value="GREEN LINE">GREEN LINE</option>
-                      <option value="INTERMEDICA">INTERMEDICA</option>
-                      <option value="ITAU">ITAU</option>
-                      <option value="NOTRE DAME">NOTRE DAME</option>
-                      <option value="MARITIMA">MARITIMA</option>
-                      <option value="MEDIAL">MEDIAL</option>
-                      <option value="MEDISERVICE">MEDISERVICE</option>
-                      <option value="METRUS">METRUS</option>
-                      <option value="OMINT">OMINT</option>
-                      <option value="ONE HEALTH">ONE HEALTH</option>
-                      <option value="PORTO SEGURO">PORTO SEGURO</option>
-                      <option value="POSTAL SAUDE">POSTAL SAUDE</option>
-                      <option value="SABESPREV">SABESPREV</option>
-                      <option value="SAUDE CAIXA">SAUDE CAIXA</option>
-                      <option value="SOMPO SAÚDE">SOMPO SAÚDE</option>
-                      <option value="TRASMONTANO">TRASMONTANO</option>
-                      <option value="UNIMED">UNIMED</option>
-                      <option value="UNIMED CENTRAL NACIONAL">UNIMED CENTRAL NACIONAL</option>
-                      <option value="UNIMED FESP">UNIMED FESP</option>
-                      <option value="UNIMED GUARULHOS">UNIMED GUARULHOS</option>
-                      <option value="UNIMED SEGUROS">UNIMED SEGUROS</option>
-                      <option value="VOLKSWAGEN">VOLKSWAGEN</option>
-                      <option value="OUTROS">OUTROS</option>
-                    </select>
+                      className="border-gray-400 focus:ring-blue-500"
+                    />
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.convenio}
@@ -1106,8 +1380,8 @@ export default function PatientFormFileMaker({
               {/* Terceira Linha: Data Consulta, Convênio */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Subtipo Convênio */}
-                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     SUBTIPO
                   </label>
                   <div className="flex-1">
@@ -1121,246 +1395,13 @@ export default function PatientFormFileMaker({
                       className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
                     />
                   ) : isEditing ? (
-                    <select
+                    <CustomSelect
                       value={currentPatient.subtipoConvenio || ''}
-                      onChange={(e) => handleChange('subtipoConvenio', e.target.value)}
+                      onChange={(value) => handleChange('subtipoConvenio', value)}
+                      options={SUBTIPO_OPTIONS}
                       aria-label="Subtipo do convênio"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="AMIL 140 PLUS">AMIL 140 PLUS</option>
-                      <option value="AMIL 160">AMIL 160</option>
-                      <option value="AMIL BLUE I">AMIL BLUE I</option>
-                      <option value="AMIL BLUE II">AMIL BLUE II</option>
-                      <option value="AMIL GLOBAL I">AMIL GLOBAL I</option>
-                      <option value="AMIL 30">AMIL 30</option>
-                      <option value="AMIL 40">AMIL 40</option>
-                      <option value="AMIL 200">AMIL 200</option>
-                      <option value="AMIL 300">AMIL 300</option>
-                      <option value="AMIL 400">AMIL 400</option>
-                      <option value="AMIL 500">AMIL 500</option>
-                      <option value="AMIL 700">AMIL 700</option>
-                      <option value="AMIL BLUE GOLD">AMIL BLUE GOLD</option>
-                      <option value="AMIL FACIL S60 SP">AMIL FACIL S60 SP</option>
-                      <option value="AMIL COLABORADOR">AMIL COLABORADOR</option>
-                      <option value="AMIL ORIENTADOR 40">AMIL ORIENTADOR 40</option>
-                      <option value="AMIL ORIENTADOR 140">AMIL ORIENTADOR 140</option>
-                      <option value="AMIL NEXT MUN SAO PAULO">AMIL NEXT MUN SAO PAULO</option>
-                      <option value="AMIL QUALITE M22">AMIL QUALITE M22</option>
-                      <option value="AMIL ONE S1500">AMIL ONE S1500</option>
-                      <option value="AMIL ONE S2500">AMIL ONE S2500</option>
-                      <option value="AMIL OPCAO M22">AMIL OPCAO M22</option>
-                      <option value="AMIL SANTA PAULA">AMIL SANTA PAULA</option>
-                      <option value="AMIL S40">AMIL S40</option>
-                      <option value="AMIL S80">AMIL S80</option>
-                      <option value="AMIL S250">AMIL S250</option>
-                      <option value="AMIL S350">AMIL S350</option>
-                      <option value="AMIL S450">AMIL S450</option>
-                      <option value="AMIL S580">AMIL S580</option>
-                      <option value="AMIL S750">AMIL S750</option>
-                      <option value="ABSOLUTO">ABSOLUTO</option>
-                      <option value="ACESSO IV">ACESSO IV</option>
-                      <option value="ADVANCE 600">ADVANCE 600</option>
-                      <option value="ADVANCE 700">ADVANCE 700</option>
-                      <option value="ADVANCE 800">ADVANCE 800</option>
-                      <option value="AGREGADO">AGREGADO</option>
-                      <option value="AMPLA COLETIVO">AMPLA COLETIVO</option>
-                      <option value="ASSOCIADOS">ASSOCIADOS</option>
-                      <option value="ATIVOS">ATIVOS</option>
-                      <option value="BASICO">BASICO</option>
-                      <option value="BASICO 10">BASICO 10</option>
-                      <option value="BETA">BETA</option>
-                      <option value="BLUE III">BLUE III</option>
-                      <option value="BLUE IV">BLUE IV</option>
-                      <option value="BLUE 300">BLUE 300</option>
-                      <option value="BLUE 300 PLUS">BLUE 300 PLUS</option>
-                      <option value="BLUE 400">BLUE 400</option>
-                      <option value="BLUE 400 PLUS">BLUE 400 PLUS</option>
-                      <option value="BLUE 500">BLUE 500</option>
-                      <option value="BLUE 500 PLUS">BLUE 500 PLUS</option>
-                      <option value="BLUE 600">BLUE 600</option>
-                      <option value="BLUE 600 PLUS">BLUE 600 PLUS</option>
-                      <option value="BLUE 700">BLUE 700</option>
-                      <option value="BLUE 800">BLUE 800</option>
-                      <option value="BLUE EXECUTIVO">BLUE EXECUTIVO</option>
-                      <option value="BRANCO">BRANCO</option>
-                      <option value="BRANCO SL">BRANCO SL</option>
-                      <option value="BRANCO 100">BRANCO 100</option>
-                      <option value="BRANCO 150">BRANCO 150</option>
-                      <option value="BRONZE">BRONZE</option>
-                      <option value="BRONZE I">BRONZE I</option>
-                      <option value="BRONZE TOP">BRONZE TOP</option>
-                      <option value="CABESP FAMILIA">CABESP FAMILIA</option>
-                      <option value="CELEBRITY">CELEBRITY</option>
-                      <option value="CENTRAL NACIONAL">CENTRAL NACIONAL</option>
-                      <option value="CLASS 620 E">CLASS 620 E</option>
-                      <option value="CLASS 620 A">CLASS 620 A</option>
-                      <option value="CLASS 640 A">CLASS 640 A</option>
-                      <option value="CLASSICO">CLASSICO</option>
-                      <option value="COLETIVO EMPRESARIAL">COLETIVO EMPRESARIAL</option>
-                      <option value="COMPLETO">COMPLETO</option>
-                      <option value="CORPORATIVO COMPLETO">CORPORATIVO COMPLETO</option>
-                      <option value="CORREIOS SAUDE">CORREIOS SAUDE</option>
-                      <option value="CRISTAL I">CRISTAL I</option>
-                      <option value="D">D</option>
-                      <option value="DIAMANTE I">DIAMANTE I</option>
-                      <option value="DIAMANTE I 876">DIAMANTE I 876</option>
-                      <option value="DINAMICO">DINAMICO</option>
-                      <option value="DSP CLINIC">DSP CLINIC</option>
-                      <option value="DSP PLENA">DSP PLENA</option>
-                      <option value="DIX 10">DIX 10</option>
-                      <option value="DIX ORIENTADOR">DIX ORIENTADOR</option>
-                      <option value="DIX 100">DIX 100</option>
-                      <option value="EFETIVO IV">EFETIVO IV</option>
-                      <option value="ELETROPAULO">ELETROPAULO</option>
-                      <option value="ESSENCIAL">ESSENCIAL</option>
-                      <option value="ESSENCIAL PLUS">ESSENCIAL PLUS</option>
-                      <option value="ESPECIAL">ESPECIAL</option>
-                      <option value="ESPECIAL I">ESPECIAL I</option>
-                      <option value="ESPECIAL II">ESPECIAL II</option>
-                      <option value="ESPECIAL III">ESPECIAL III</option>
-                      <option value="ESPECIAL 100">ESPECIAL 100</option>
-                      <option value="ESTILO I">ESTILO I</option>
-                      <option value="ESTILO III">ESTILO III</option>
-                      <option value="ES07 ESPECIAL">ES07 ESPECIAL</option>
-                      <option value="EXATO">EXATO</option>
-                      <option value="EXCELLENCE">EXCELLENCE</option>
-                      <option value="EXECUTIVE">EXECUTIVE</option>
-                      <option value="EXECUTIVO">EXECUTIVO</option>
-                      <option value="EXCLUSIVO">EXCLUSIVO</option>
-                      <option value="FAMILIA">FAMILIA</option>
-                      <option value="FAMILA AGREGADO">FAMILA AGREGADO</option>
-                      <option value="FESP">FESP</option>
-                      <option value="FIT">FIT</option>
-                      <option value="FLEX">FLEX</option>
-                      <option value="GREEN 211">GREEN 211</option>
-                      <option value="H2L2R2ED">H2L2R2ED</option>
-                      <option value="H3L2">H3L2</option>
-                      <option value="IDEAL ENFERMARIA">IDEAL ENFERMARIA</option>
-                      <option value="INFINITY 1000">INFINITY 1000</option>
-                      <option value="INTEGRADA">INTEGRADA</option>
-                      <option value="LIDER">LIDER</option>
-                      <option value="LIFE STD">LIFE STD</option>
-                      <option value="LT3">LT3</option>
-                      <option value="LT4">LT4</option>
-                      <option value="MASTER">MASTER</option>
-                      <option value="MASTER I">MASTER I</option>
-                      <option value="MASTER II">MASTER II</option>
-                      <option value="MASTER III">MASTER III</option>
-                      <option value="MASTER IV">MASTER IV</option>
-                      <option value="MAX 250">MAX 250</option>
-                      <option value="MAX 300">MAX 300</option>
-                      <option value="MAX 350">MAX 350</option>
-                      <option value="MAX 400">MAX 400</option>
-                      <option value="MAXI">MAXI</option>
-                      <option value="MAXIMO">MAXIMO</option>
-                      <option value="MEDIAL 200">MEDIAL 200</option>
-                      <option value="MEDIAL CLASS 620">MEDIAL CLASS 620</option>
-                      <option value="MEDIAL 31">MEDIAL 31</option>
-                      <option value="MEDIAL 400">MEDIAL 400</option>
-                      <option value="MEDIAL 840 A">MEDIAL 840 A</option>
-                      <option value="MEDIAL ESTRELAS 31">MEDIAL ESTRELAS 31</option>
-                      <option value="MEDIAL EXECUTIVE PLUS">MEDIAL EXECUTIVE PLUS</option>
-                      <option value="MEDIAL INTER II NAC PJCE">MEDIAL INTER II NAC PJCE</option>
-                      <option value="MEDIAL GOL">MEDIAL GOL</option>
-                      <option value="MEDIAL IDEAL 420 A">MEDIAL IDEAL 420 A</option>
-                      <option value="MEDIAL ORIENTADOR CLASS 30">MEDIAL ORIENTADOR CLASS 30</option>
-                      <option value="MEDIAL PLENO II">MEDIAL PLENO II</option>
-                      <option value="MEDIAL PREMIUM 840A">MEDIAL PREMIUM 840A</option>
-                      <option value="MEDICUS M22">MEDICUS M22</option>
-                      <option value="MEDICUS 122">MEDICUS 122</option>
-                      <option value="MELHOR">MELHOR</option>
-                      <option value="MSI">MSI</option>
-                      <option value="NDS 111">NDS 111</option>
-                      <option value="NDS 126">NDS 126</option>
-                      <option value="NDS 127">NDS 127</option>
-                      <option value="NDS 130">NDS 130</option>
-                      <option value="NDS 140">NDS 140</option>
-                      <option value="NDS 141">NDS 141</option>
-                      <option value="NDS 161">NDS 161</option>
-                      <option value="ONE BLACK T2">ONE BLACK T2</option>
-                      <option value="ONE BLACK T3">ONE BLACK T3</option>
-                      <option value="ONE 2000">ONE 2000</option>
-                      <option value="OPCAO M22">OPCAO M22</option>
-                      <option value="OPCAO 122">OPCAO 122</option>
-                      <option value="ORIGINAL">ORIGINAL</option>
-                      <option value="OSWALDO CRUZ 100">OSWALDO CRUZ 100</option>
-                      <option value="OURO">OURO</option>
-                      <option value="OURO I">OURO I</option>
-                      <option value="OURO III">OURO III</option>
-                      <option value="OURO IV">OURO IV</option>
-                      <option value="OURO MAIS Q">OURO MAIS Q</option>
-                      <option value="OURO MAX Q">OURO MAX Q</option>
-                      <option value="PADRAO">PADRAO</option>
-                      <option value="PLENO">PLENO</option>
-                      <option value="PLENO II 920">PLENO II 920</option>
-                      <option value="PLUS">PLUS</option>
-                      <option value="PME COMPACTO">PME COMPACTO</option>
-                      <option value="PORTO MED I">PORTO MED I</option>
-                      <option value="PRATA">PRATA</option>
-                      <option value="PRATA BRONZE COPAR Q">PRATA BRONZE COPAR Q</option>
-                      <option value="PRATA E MAIS">PRATA E MAIS</option>
-                      <option value="PRATA MAIS Q">PRATA MAIS Q</option>
-                      <option value="PRATA I">PRATA I</option>
-                      <option value="PRATA TOP">PRATA TOP</option>
-                      <option value="PREMIUM">PREMIUM</option>
-                      <option value="PREMIUM TOP">PREMIUM TOP</option>
-                      <option value="PREMIUM 800">PREMIUM 800</option>
-                      <option value="PREMIUM 900">PREMIUM 900</option>
-                      <option value="QUALITE">QUALITE</option>
-                      <option value="REDE 300">REDE 300</option>
-                      <option value="REFE EFETIVO">REFE EFETIVO</option>
-                      <option value="REDE EFETIVO III">REDE EFETIVO III</option>
-                      <option value="REDE EFETIVO IV">REDE EFETIVO IV</option>
-                      <option value="REDE HSC IDEAL">REDE HSC IDEAL</option>
-                      <option value="REDE HSC NACIONAL">REDE HSC NACIONAL</option>
-                      <option value="REDE IDEAL I">REDE IDEAL I</option>
-                      <option value="REDE LIVRE ESCOLHA">REDE LIVRE ESCOLHA</option>
-                      <option value="REDE PERFIL SP">REDE PERFIL SP</option>
-                      <option value="REDE PERSONAL IV">REDE PERSONAL IV</option>
-                      <option value="REDE PREFERENCIAL">REDE PREFERENCIAL</option>
-                      <option value="REDE PREFERENCIAL PLUS">REDE PREFERENCIAL PLUS</option>
-                      <option value="REDE INTERNACIONAL">REDE INTERNACIONAL</option>
-                      <option value="REDE NACIONAL INDIVIDUAL">REDE NACIONAL INDIVIDUAL</option>
-                      <option value="REDE NACIONAL EMPRESARIAL">REDE NACIONAL EMPRESARIAL</option>
-                      <option value="REDE NACIONAL EMPRESARIAL SPG">REDE NACIONAL EMPRESARIAL SPG</option>
-                      <option value="REDE NACIONAL ESPECIAL">REDE NACIONAL ESPECIAL</option>
-                      <option value="REDE NACIONAL FLEX">REDE NACIONAL FLEX</option>
-                      <option value="REDE NACIONAL FLEX II">REDE NACIONAL FLEX II</option>
-                      <option value="REDE NACIONAL PLUS">REDE NACIONAL PLUS</option>
-                      <option value="REDE PERSONAL VI">REDE PERSONAL VI</option>
-                      <option value="REDE SCANIA">REDE SCANIA</option>
-                      <option value="REDE SIEMENS">REDE SIEMENS</option>
-                      <option value="REGIONAL">REGIONAL</option>
-                      <option value="SAUDE CAIXA ATIVOS">SAUDE CAIXA ATIVOS</option>
-                      <option value="SEGUROS UNIMED HCOR">SEGUROS UNIMED HCOR</option>
-                      <option value="SELETO I">SELETO I</option>
-                      <option value="SENIOR I">SENIOR I</option>
-                      <option value="SENIOR II 920">SENIOR II 920</option>
-                      <option value="SKILL">SKILL</option>
-                      <option value="SMART 200">SMART 200</option>
-                      <option value="SMART 300">SMART 300</option>
-                      <option value="SMART 400">SMART 400</option>
-                      <option value="SMART 500">SMART 500</option>
-                      <option value="SMART 600">SMART 600</option>
-                      <option value="STANDARD">STANDARD</option>
-                      <option value="SUPERIEUR">SUPERIEUR</option>
-                      <option value="SUPERIOR NACIONAL">SUPERIOR NACIONAL</option>
-                      <option value="SUPREMO">SUPREMO</option>
-                      <option value="S 450">S 450</option>
-                      <option value="S 750">S 750</option>
-                      <option value="UNIPLAN INTEGRADA">UNIPLAN INTEGRADA</option>
-                      <option value="UNIPLAN PADRÃO">UNIPLAN PADRÃO</option>
-                      <option value="UNIPLAN SUPREMO">UNIPLAN SUPREMO</option>
-                      <option value="UNIPLAN UP OURO">UNIPLAN UP OURO</option>
-                      <option value="UNIPLAN UP BRONZE">UNIPLAN UP BRONZE</option>
-                      <option value="UNIPLAN">UNIPLAN</option>
-                      <option value="UNIPLAN NEW PRATA">UNIPLAN NEW PRATA</option>
-                      <option value="VERSATIL">VERSATIL</option>
-                      <option value="VITA">VITA</option>
-                      <option value="UNIPLAN ESPECIAL">UNIPLAN ESPECIAL</option>
-                      <option value="UNIPLAN MASTERAMIL">UNIPLAN MASTERAMIL</option>
-                    </select>
+                      className="border-gray-400 focus:ring-blue-500"
+                    />
                   ) : (
                     <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
                       {currentPatient.subtipoConvenio}
@@ -1370,8 +1411,8 @@ export default function PatientFormFileMaker({
                 </div>
 
                 {/* Resposta */}
-                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     RESPOSTA
                   </label>
                   <div className="flex-1">
@@ -1388,16 +1429,13 @@ export default function PatientFormFileMaker({
                       <option value="LIMBO">LIMBO</option>
                     </select>
                   ) : isEditing ? (
-                    <select
+                    <CustomSelect
                       value={currentPatient.resposta || ''}
-                      onChange={(e) => handleChange('resposta', e.target.value)}
+                      onChange={(value) => handleChange('resposta', value)}
+                      options={RESPOSTA_OPTIONS}
                       aria-label="Resposta do paciente"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="NÃO COMPARECEU">NÃO COMPARECEU</option>
-                      <option value="COMPARECEU">COMPARECEU</option>
-                    </select>
+                      className="border-gray-400 focus:ring-blue-500"
+                    />
                   ) : (
                     <div className={`px-3 py-1.5 border border-gray-300 rounded font-semibold min-h-[38px] flex items-center ${
                       currentPatient.resposta === 'NÃO COMPARECEU' ? 'bg-red-100 text-red-700' : 
@@ -1669,8 +1707,8 @@ export default function PatientFormFileMaker({
               {/* Sexta Linha: Resolvido, Classificação */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Resolvido */}
-                <div className="flex flex-col sm:flex-row sm:items-start lg:col-span-1">
-                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 sm:pt-1.5 text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 lg:col-span-1">
+                  <label className="sm:w-40 lg:w-32 sm:text-right sm:pr-3 text-xs sm:text-sm font-medium text-gray-700">
                     RESOLVIDO
                   </label>
                   <div className="flex-1">
@@ -1687,17 +1725,13 @@ export default function PatientFormFileMaker({
                       <option value="LIMBO">LIMBO</option>
                     </select>
                   ) : isEditing ? (
-                    <select
+                    <CustomSelect
                       value={currentPatient.resolvido || ''}
-                      onChange={(e) => handleChange('resolvido', e.target.value)}
+                      onChange={(value) => handleChange('resolvido', value)}
+                      options={RESOLVIDO_OPTIONS}
                       aria-label="Status resolvido"
-                      className="w-full px-3 py-1.5 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="SIM">SIM</option>
-                      <option value="NÃO">NÃO</option>
-                      <option value="LIMBO">LIMBO</option>
-                    </select>
+                      className="border-gray-400 focus:ring-blue-500"
+                    />
                   ) : (
                     <div className={`px-3 py-1.5 border border-gray-300 rounded font-semibold ${
                       currentPatient.resolvido === 'SIM' 
