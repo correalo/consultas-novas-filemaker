@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreatePatientDto {
   @IsString()
@@ -68,4 +69,10 @@ export class CreatePatientDto {
   @IsString()
   @IsOptional()
   botaoLimboLigacoes?: string;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => Object)
+  recall?: any[];
 }

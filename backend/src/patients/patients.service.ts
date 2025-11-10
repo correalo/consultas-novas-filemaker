@@ -55,6 +55,7 @@ export class PatientsService {
     if (updatePatientDto.botaoLimboSms !== undefined) updateData['BOTÃO LIMBO SMS'] = updatePatientDto.botaoLimboSms;
     if (updatePatientDto.botaoLimboEmail !== undefined) updateData['BOTÃO LIMBO EMAIL'] = updatePatientDto.botaoLimboEmail;
     if (updatePatientDto.botaoLimboLigacoes !== undefined) updateData['BOTÃO LIMBO LIGAÇÕES'] = updatePatientDto.botaoLimboLigacoes;
+    if (updatePatientDto.recall !== undefined) updateData['recall'] = updatePatientDto.recall;
     
     const patient = await this.patientModel
       .findByIdAndUpdate(id, updateData, { new: true })

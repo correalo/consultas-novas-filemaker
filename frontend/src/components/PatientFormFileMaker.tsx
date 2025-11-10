@@ -365,6 +365,8 @@ export default function PatientFormFileMaker({
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [showRecallPopover, setShowRecallPopover] = useState(false);
+  const recallPopoverRef = useRef<HTMLDivElement>(null);
   const [todos, setTodos] = useState<ToDo[]>([]);
   const [newTodo, setNewTodo] = useState<Partial<ToDo>>({
     nome: patient.nome || '',
@@ -612,9 +614,11 @@ export default function PatientFormFileMaker({
         botaoLimboSms: editedPatient.botaoLimboSms,
         botaoLimboEmail: editedPatient.botaoLimboEmail,
         botaoLimboLigacoes: editedPatient.botaoLimboLigacoes,
+        recall: editedPatient.recall,
       };
       
       console.log('Dados sendo enviados:', updateData);
+      console.log('Recall sendo enviado:', editedPatient.recall);
       await patientService.update(patient._id, updateData);
       setIsEditing(false);
       if (onUpdate) {
@@ -635,6 +639,11 @@ export default function PatientFormFileMaker({
 
   const currentPatient = isEditing ? editedPatient : patient;
 
+  // Sincronizar editedPatient quando patient mudar
+  useEffect(() => {
+    setEditedPatient(patient);
+  }, [patient]);
+
   // Calcular idade automaticamente quando a data de nascimento mudar
   useEffect(() => {
     if (isEditing && editedPatient.dataNascimento) {
@@ -644,6 +653,20 @@ export default function PatientFormFileMaker({
       }
     }
   }, [editedPatient.dataNascimento, isEditing]);
+
+  // Fechar popover de recall ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (recallPopoverRef.current && !recallPopoverRef.current.contains(event.target as Node)) {
+        setShowRecallPopover(false);
+      }
+    };
+
+    if (showRecallPopover) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showRecallPopover]);
 
   const handleWhatsApp = () => {
     if (currentPatient.celular) {
@@ -1785,21 +1808,517 @@ export default function PatientFormFileMaker({
                 </label>
                 <div className="flex-1 flex gap-4">
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.whatsapp_contato_1 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], whatsapp_contato_1: e.target.checked, whatsapp_data_1: e.target.checked ? new Date() : recall[0].whatsapp_data_1 };
+                        handleChange('recall', recall);
+                      }}
+                    />
                     <span className="text-sm">1X</span>
                   </label>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.whatsapp_contato_2 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], whatsapp_contato_2: e.target.checked, whatsapp_data_2: e.target.checked ? new Date() : recall[0].whatsapp_data_2 };
+                        handleChange('recall', recall);
+                      }}
+                    />
                     <span className="text-sm">2X</span>
                   </label>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.whatsapp_contato_3 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], whatsapp_contato_3: e.target.checked, whatsapp_data_3: e.target.checked ? new Date() : recall[0].whatsapp_data_3 };
+                        handleChange('recall', recall);
+                      }}
+                    />
                     <span className="text-sm">3X</span>
                   </label>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
-                    <span className="text-sm">LIMBO</span>
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.whatsapp_contato_4 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], whatsapp_contato_4: e.target.checked, whatsapp_data_4: e.target.checked ? new Date() : recall[0].whatsapp_data_4 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">4X</span>
                   </label>
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.whatsapp_contato_5 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], whatsapp_contato_5: e.target.checked, whatsapp_data_5: e.target.checked ? new Date() : recall[0].whatsapp_data_5 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">5X</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Ligações Checkboxes */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
+                  LIGAÇÕES
+                </label>
+                <div className="flex-1 flex gap-4 items-center">
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.ligacao_contato_1 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], ligacao_contato_1: e.target.checked, ligacao_data_1: e.target.checked ? new Date() : recall[0].ligacao_data_1 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">1X</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.ligacao_contato_2 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], ligacao_contato_2: e.target.checked, ligacao_data_2: e.target.checked ? new Date() : recall[0].ligacao_data_2 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">2X</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.ligacao_contato_3 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], ligacao_contato_3: e.target.checked, ligacao_data_3: e.target.checked ? new Date() : recall[0].ligacao_data_3 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">3X</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.ligacao_contato_4 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], ligacao_contato_4: e.target.checked, ligacao_data_4: e.target.checked ? new Date() : recall[0].ligacao_data_4 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">4X</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded" 
+                      disabled={!isEditing}
+                      checked={currentPatient.recall?.[0]?.ligacao_contato_5 || false}
+                      onChange={(e) => {
+                        const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                        recall[0] = { ...recall[0], ligacao_contato_5: e.target.checked, ligacao_data_5: e.target.checked ? new Date() : recall[0].ligacao_data_5 };
+                        handleChange('recall', recall);
+                      }}
+                    />
+                    <span className="text-sm">5X</span>
+                  </label>
+                  
+                  {/* Botão RECALL com Popover */}
+                  <div className="relative" ref={recallPopoverRef}>
+                    <button
+                      type="button"
+                      onClick={() => setShowRecallPopover(!showRecallPopover)}
+                      className="ml-4 px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
+                    >
+                      RECALL
+                    </button>
+                    
+                    {showRecallPopover && (
+                      <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-xl z-50 p-4 max-h-96 overflow-y-auto">
+                        <div className="space-y-4">
+                          {/* WhatsApp 1 */}
+                          <div className="bg-gray-50 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">WHATSAPP 1</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.whatsapp_contato_1 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], whatsapp_contato_1: e.target.checked, whatsapp_data_1: e.target.checked ? new Date() : recall[0].whatsapp_data_1 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">1X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.whatsapp_contato_2 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], whatsapp_contato_2: e.target.checked, whatsapp_data_2: e.target.checked ? new Date() : recall[0].whatsapp_data_2 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">2X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.whatsapp_contato_3 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], whatsapp_contato_3: e.target.checked, whatsapp_data_3: e.target.checked ? new Date() : recall[0].whatsapp_data_3 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">3X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.whatsapp_contato_4 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], whatsapp_contato_4: e.target.checked, whatsapp_data_4: e.target.checked ? new Date() : recall[0].whatsapp_data_4 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">4X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.whatsapp_contato_5 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], whatsapp_contato_5: e.target.checked, whatsapp_data_5: e.target.checked ? new Date() : recall[0].whatsapp_data_5 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">5X</span>
+                              </label>
+                            </div>
+                          </div>
+                          
+                          {/* Ligações 1 */}
+                          <div className="border-t pt-4 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">LIGAÇÕES 1</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.ligacao_contato_1 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], ligacao_contato_1: e.target.checked, ligacao_data_1: e.target.checked ? new Date() : recall[0].ligacao_data_1 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">1X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.ligacao_contato_2 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], ligacao_contato_2: e.target.checked, ligacao_data_2: e.target.checked ? new Date() : recall[0].ligacao_data_2 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">2X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.ligacao_contato_3 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], ligacao_contato_3: e.target.checked, ligacao_data_3: e.target.checked ? new Date() : recall[0].ligacao_data_3 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">3X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.ligacao_contato_4 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], ligacao_contato_4: e.target.checked, ligacao_data_4: e.target.checked ? new Date() : recall[0].ligacao_data_4 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">4X</span>
+                              </label>
+                              <label className="flex items-center gap-1.5">
+                                <input 
+                                  type="checkbox" 
+                                  className="rounded" 
+                                  disabled={!isEditing}
+                                  checked={currentPatient.recall?.[0]?.ligacao_contato_5 || false}
+                                  onChange={(e) => {
+                                    const recall = currentPatient.recall || [{ periodo: 0, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false }];
+                                    recall[0] = { ...recall[0], ligacao_contato_5: e.target.checked, ligacao_data_5: e.target.checked ? new Date() : recall[0].ligacao_data_5 };
+                                    handleChange('recall', recall);
+                                  }}
+                                />
+                                <span className="text-xs">5X</span>
+                              </label>
+                            </div>
+                          </div>
+                          
+                          {/* WhatsApp 2 */}
+                          <div className="border-t pt-4 bg-gray-50 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">WHATSAPP 2</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`wa2-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[1] as any)?.[`whatsapp_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[1]) recall[1] = { periodo: 1, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[1] = { ...recall[1], [`whatsapp_contato_${num}`]: e.target.checked, [`whatsapp_data_${num}`]: e.target.checked ? new Date() : (recall[1] as any)[`whatsapp_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Ligações 2 */}
+                          <div className="border-t pt-4 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">LIGAÇÕES 2</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`lig2-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[1] as any)?.[`ligacao_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[1]) recall[1] = { periodo: 1, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[1] = { ...recall[1], [`ligacao_contato_${num}`]: e.target.checked, [`ligacao_data_${num}`]: e.target.checked ? new Date() : (recall[1] as any)[`ligacao_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* WhatsApp 3 */}
+                          <div className="border-t pt-4 bg-gray-50 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">WHATSAPP 3</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`wa3-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[2] as any)?.[`whatsapp_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[2]) recall[2] = { periodo: 2, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[2] = { ...recall[2], [`whatsapp_contato_${num}`]: e.target.checked, [`whatsapp_data_${num}`]: e.target.checked ? new Date() : (recall[2] as any)[`whatsapp_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Ligações 3 */}
+                          <div className="border-t pt-4 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">LIGAÇÕES 3</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`lig3-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[2] as any)?.[`ligacao_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[2]) recall[2] = { periodo: 2, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[2] = { ...recall[2], [`ligacao_contato_${num}`]: e.target.checked, [`ligacao_data_${num}`]: e.target.checked ? new Date() : (recall[2] as any)[`ligacao_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* WhatsApp 4 */}
+                          <div className="border-t pt-4 bg-gray-50 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">WHATSAPP 4</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`wa4-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[3] as any)?.[`whatsapp_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[3]) recall[3] = { periodo: 3, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[3] = { ...recall[3], [`whatsapp_contato_${num}`]: e.target.checked, [`whatsapp_data_${num}`]: e.target.checked ? new Date() : (recall[3] as any)[`whatsapp_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Ligações 4 */}
+                          <div className="border-t pt-4 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">LIGAÇÕES 4</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`lig4-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[3] as any)?.[`ligacao_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[3]) recall[3] = { periodo: 3, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[3] = { ...recall[3], [`ligacao_contato_${num}`]: e.target.checked, [`ligacao_data_${num}`]: e.target.checked ? new Date() : (recall[3] as any)[`ligacao_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* WhatsApp 5 */}
+                          <div className="border-t pt-4 bg-gray-50 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">WHATSAPP 5</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`wa5-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[4] as any)?.[`whatsapp_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[4]) recall[4] = { periodo: 4, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[4] = { ...recall[4], [`whatsapp_contato_${num}`]: e.target.checked, [`whatsapp_data_${num}`]: e.target.checked ? new Date() : (recall[4] as any)[`whatsapp_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Ligações 5 */}
+                          <div className="border-t pt-4 p-3 rounded">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">LIGAÇÕES 5</h4>
+                            <div className="flex gap-3 flex-wrap">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={`lig5-${num}`} className="flex items-center gap-1.5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="rounded" 
+                                    disabled={!isEditing}
+                                    checked={(currentPatient.recall?.[4] as any)?.[`ligacao_contato_${num}`] || false}
+                                    onChange={(e) => {
+                                      const recall = currentPatient.recall || [];
+                                      if (!recall[4]) recall[4] = { periodo: 4, status: 'pendente', observacao: '', contato_realizado: false, whatsapp_contato_1: false, whatsapp_contato_2: false, whatsapp_contato_3: false, whatsapp_contato_4: false, whatsapp_contato_5: false, ligacao_contato_1: false, ligacao_contato_2: false, ligacao_contato_3: false, ligacao_contato_4: false, ligacao_contato_5: false };
+                                      recall[4] = { ...recall[4], [`ligacao_contato_${num}`]: e.target.checked, [`ligacao_data_${num}`]: e.target.checked ? new Date() : (recall[4] as any)[`ligacao_data_${num}`] };
+                                      handleChange('recall', recall);
+                                    }}
+                                  />
+                                  <span className="text-xs">{num}X</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

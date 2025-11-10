@@ -60,7 +60,6 @@ export type PatientDocument = Patient & Document;
       delete ret['BOTÃO LIMBO EMAIL'];
       delete ret['BOTÃO LIMBO LIGAÇÕES'];
       delete ret['retornos'];
-      delete ret['recall'];
       delete ret['_retornos_atualizados_em'];
       delete ret['_recall_criado_em'];
       delete ret['_campo_retornos_criado_em'];
@@ -144,6 +143,59 @@ export class Patient {
 
   @Prop()
   '_imported_at': Date;
+
+  @Prop({ type: [{
+    periodo: Number,
+    status: String,
+    observacao: String,
+    contato_realizado: Boolean,
+    whatsapp_contato_1: Boolean,
+    whatsapp_data_1: Date,
+    whatsapp_contato_2: Boolean,
+    whatsapp_data_2: Date,
+    whatsapp_contato_3: Boolean,
+    whatsapp_data_3: Date,
+    whatsapp_contato_4: Boolean,
+    whatsapp_data_4: Date,
+    whatsapp_contato_5: Boolean,
+    whatsapp_data_5: Date,
+    ligacao_contato_1: Boolean,
+    ligacao_data_1: Date,
+    ligacao_contato_2: Boolean,
+    ligacao_data_2: Date,
+    ligacao_contato_3: Boolean,
+    ligacao_data_3: Date,
+    ligacao_contato_4: Boolean,
+    ligacao_data_4: Date,
+    ligacao_contato_5: Boolean,
+    ligacao_data_5: Date
+  }], default: [] })
+  recall: Array<{
+    periodo: number;
+    status: string;
+    observacao: string;
+    contato_realizado: boolean;
+    whatsapp_contato_1: boolean;
+    whatsapp_data_1: Date;
+    whatsapp_contato_2: boolean;
+    whatsapp_data_2: Date;
+    whatsapp_contato_3: boolean;
+    whatsapp_data_3: Date;
+    whatsapp_contato_4: boolean;
+    whatsapp_data_4: Date;
+    whatsapp_contato_5: boolean;
+    whatsapp_data_5: Date;
+    ligacao_contato_1: boolean;
+    ligacao_data_1: Date;
+    ligacao_contato_2: boolean;
+    ligacao_data_2: Date;
+    ligacao_contato_3: boolean;
+    ligacao_data_3: Date;
+    ligacao_contato_4: boolean;
+    ligacao_data_4: Date;
+    ligacao_contato_5: boolean;
+    ligacao_data_5: Date;
+  }>;
 }
 
 export const PatientSchema = SchemaFactory.createForClass(Patient);
