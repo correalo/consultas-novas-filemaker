@@ -6,7 +6,7 @@ import { isAuthenticated } from '@/lib/auth';
 import { patientService } from '@/services/patientService';
 import { Patient } from '@/types';
 import Navbar from '@/components/Navbar';
-import { Users, Calendar, AlertTriangle, TrendingUp, FileText, ArrowRight, Briefcase, User as UserIcon, Cake, Mail } from 'lucide-react';
+import { Users, Calendar, AlertTriangle, TrendingUp, FileText, ArrowRight, Briefcase, User as UserIcon, Cake, Mail, CheckSquare } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -114,7 +114,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <button
                 onClick={() => router.push('/patients')}
                 className="bg-white rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-8 shadow-md hover:shadow-lg transition-all group text-left"
@@ -141,6 +141,20 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">Novo Paciente</h3>
                 <p className="text-sm sm:text-base text-gray-600">Cadastre um novo paciente no sistema</p>
+              </button>
+
+              <button
+                onClick={() => router.push('/todos')}
+                className="bg-white rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-8 shadow-md hover:shadow-lg transition-all group text-left"
+              >
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="bg-purple-100 rounded-lg p-2 sm:p-3">
+                    <CheckSquare className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-purple-600" />
+                  </div>
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">ToDo's</h3>
+                <p className="text-sm sm:text-base text-gray-600">Gerencie suas tarefas e afazeres</p>
               </button>
             </div>
 

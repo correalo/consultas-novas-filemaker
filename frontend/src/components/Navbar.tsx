@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { logout, getUser } from '@/lib/auth';
-import { LogOut, User, Users, LayoutDashboard, List, UserPlus, Menu, X } from 'lucide-react';
+import { LogOut, User, Users, LayoutDashboard, List, UserPlus, Menu, X, CheckSquare } from 'lucide-react';
 
 export default function Navbar() {
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function Navbar() {
   const isActive = (path: string) => {
     if (path === '/dashboard') return pathname === '/dashboard';
     if (path === '/patients') return pathname === '/patients' || pathname === '/patients/new';
+    if (path === '/todos') return pathname === '/todos';
     return pathname?.startsWith(path);
   };
 
@@ -31,6 +32,7 @@ export default function Navbar() {
     { path: '/patients', label: 'Pacientes', icon: Users },
     { path: '/patients/list', label: 'Lista', icon: List },
     { path: '/patients/new', label: 'Novo', icon: UserPlus },
+    { path: '/todos', label: 'ToDo\'s', icon: CheckSquare },
   ];
 
   return (
