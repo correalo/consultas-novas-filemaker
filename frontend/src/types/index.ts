@@ -36,6 +36,13 @@ export interface Recall {
   ligacao_data_5?: Date;
 }
 
+export interface LogEntry {
+  action: string;
+  timestamp: Date;
+  details?: string;
+  user?: string;
+}
+
 export interface Patient {
   _id: string;
   nome: string;
@@ -63,6 +70,7 @@ export interface Patient {
   botaoLimboLigacoes?: string;
   importedAt?: string;
   recall?: Recall[];
+  log?: LogEntry[];
 }
 
 export interface CreatePatientDto {

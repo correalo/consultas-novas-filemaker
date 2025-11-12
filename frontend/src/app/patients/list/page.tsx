@@ -6,7 +6,7 @@ import { isAuthenticated } from '@/lib/auth';
 import { patientService } from '@/services/patientService';
 import { Patient } from '@/types';
 import Navbar from '@/components/Navbar';
-import { RefreshCw, Search, Plus, Edit, Trash2, Eye, Calendar, Phone, Building2, Briefcase, User as UserIcon, Cake, Mail } from 'lucide-react';
+import { RefreshCw, Search, Plus, Edit, Trash2, Eye, Calendar, Phone, Building2, Briefcase, User as UserIcon, Cake, Mail, MessageSquare, FileText, ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function PatientsListPage() {
   const router = useRouter();
@@ -16,6 +16,10 @@ export default function PatientsListPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [expandedYears, setExpandedYears] = useState<Set<string>>(new Set());
+  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const [observacaoPopover, setObservacaoPopover] = useState<string | null>(null);
+  const [logPopover, setLogPopover] = useState<string | null>(null);
 
   const loadPatients = async () => {
     try {
@@ -90,6 +94,70 @@ export default function PatientsListPage() {
         p.convenio?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : patients;
+
+  // Organizar pacientes por ano e mês
+  const organizeByYearAndMonth = () => {
+    const organized: Record<string, Record<string, Patient[]>> = {};
+    
+    filteredPatients.forEach(patient => {
+      if (!patient.dataConsulta) return;
+      
+      try {
+        // Assumindo formato DD/MM/YYYY
+        const parts = patient.dataConsulta.split('/');
+        if (parts.length !== 3) return;
+        
+        const day = parts[0];
+        const month = parts[1];
+        const year = parts[2];
+        
+        if (!organized[year]) {
+          organized[year] = {};
+        }
+        
+        if (!organized[year][month]) {
+          organized[year][month] = [];
+        }
+        
+        organized[year][month].push(patient);
+      } catch (e) {
+        console.error('Erro ao processar data:', patient.dataConsulta, e);
+      }
+    });
+    
+    return organized;
+  };
+
+  const toggleYear = (year: string) => {
+    const newExpanded = new Set(expandedYears);
+    if (newExpanded.has(year)) {
+      newExpanded.delete(year);
+    } else {
+      newExpanded.add(year);
+    }
+    setExpandedYears(newExpanded);
+  };
+
+  const toggleMonth = (yearMonth: string) => {
+    const newExpanded = new Set(expandedMonths);
+    if (newExpanded.has(yearMonth)) {
+      newExpanded.delete(yearMonth);
+    } else {
+      newExpanded.add(yearMonth);
+    }
+    setExpandedMonths(newExpanded);
+  };
+
+  const getMonthName = (month: string) => {
+    const monthNames = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    const monthIndex = parseInt(month) - 1;
+    return monthNames[monthIndex] || month;
+  };
+
+  const organizedData = organizeByYearAndMonth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -227,96 +295,170 @@ export default function PatientsListPage() {
             </p>
           </div>
         ) : viewMode === 'table' ? (
-          /* Table View */
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nome
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data Consulta
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Convênio
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Celular
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredPatients.map((patient) => (
-                    <tr key={patient._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{patient.nome}</div>
-                        {patient.alerta && (
-                          <div className="text-xs text-orange-600 flex items-center gap-1 mt-1">
-                            <span>⚠️</span>
-                            <span>{patient.alerta}</span>
+          /* Table View - Organized by Year and Month */
+          <div className="space-y-4">
+            {Object.keys(organizedData).sort((a, b) => parseInt(b) - parseInt(a)).map(year => (
+              <div key={year} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {/* Year Header */}
+                <div 
+                  className="bg-blue-600 text-white px-6 py-3 cursor-pointer flex items-center justify-between hover:bg-blue-700 transition-colors"
+                  onClick={() => toggleYear(year)}
+                >
+                  <h2 className="text-xl font-bold">{year}</h2>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm bg-blue-500 px-3 py-1 rounded-full">
+                      {Object.values(organizedData[year]).reduce((sum, patients) => sum + patients.length, 0)} pacientes
+                    </span>
+                    {expandedYears.has(year) ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                  </div>
+                </div>
+
+                {/* Months */}
+                {expandedYears.has(year) && (
+                  <div className="divide-y divide-gray-200">
+                    {Object.keys(organizedData[year]).sort((a, b) => parseInt(b) - parseInt(a)).map(month => {
+                      const yearMonth = `${year}-${month}`;
+                      const monthPatients = organizedData[year][month];
+                      
+                      return (
+                        <div key={yearMonth}>
+                          {/* Month Header */}
+                          <div 
+                            className="bg-blue-50 px-6 py-2 cursor-pointer flex items-center justify-between hover:bg-blue-100 transition-colors"
+                            onClick={() => toggleMonth(yearMonth)}
+                          >
+                            <h3 className="text-lg font-semibold text-blue-900">
+                              {year} - {month}
+                            </h3>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-blue-700 bg-blue-200 px-3 py-1 rounded-full">
+                                {monthPatients.length}
+                              </span>
+                              {expandedMonths.has(yearMonth) ? <ChevronDown className="w-4 h-4 text-blue-700" /> : <ChevronRight className="w-4 h-4 text-blue-700" />}
+                            </div>
                           </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 flex items-center gap-1">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          {patient.dataConsulta}
+
+                          {/* Month Subheader with month name */}
+                          {expandedMonths.has(yearMonth) && (
+                            <div className="bg-gray-100 px-6 py-2">
+                              <span className="text-sm font-medium text-gray-700">{getMonthName(month)}</span>
+                            </div>
+                          )}
+
+                          {/* Patients Table */}
+                          {expandedMonths.has(yearMonth) && (
+                            <div className="overflow-x-auto">
+                              <table className="min-w-full">
+                                <thead className="bg-gray-50 border-b border-gray-200">
+                                  <tr>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data Consulta</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Convênio</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resposta</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolvido</th>
+                                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Observação</th>
+                                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Log</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-100">
+                                  {monthPatients.map((patient, index) => (
+                                    <tr key={patient._id} className={`transition-colors ${index % 2 === 0 ? '' : 'bg-slate-300'} hover:bg-blue-50`}>
+                                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                        {patient.dataConsulta}
+                                      </td>
+                                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                        {patient.nome}
+                                      </td>
+                                      <td className="px-4 py-3 text-sm text-gray-900">
+                                        {patient.convenio || '-'}
+                                      </td>
+                                      <td className="px-4 py-3 whitespace-nowrap">
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                          patient.resposta === 'COMPARECEU'
+                                            ? 'bg-green-100 text-green-800'
+                                            : patient.resposta === 'NÃO COMPARECEU'
+                                            ? 'bg-red-100 text-red-800'
+                                            : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                          {patient.resposta || 'LIMBO'}
+                                        </span>
+                                      </td>
+                                      <td className="px-4 py-3 whitespace-nowrap">
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                          patient.resolvido && patient.resolvido !== 'LIMBO'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          {patient.resolvido || 'LIMBO'}
+                                        </span>
+                                      </td>
+                                      <td className="px-4 py-3 text-center relative">
+                                        <button
+                                          onClick={() => setObservacaoPopover(observacaoPopover === patient._id ? null : patient._id)}
+                                          className="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded transition-colors"
+                                          title="Ver observação"
+                                        >
+                                          <MessageSquare className="w-5 h-5" />
+                                        </button>
+                                        {observacaoPopover === patient._id && (
+                                          <div className="absolute z-50 right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-xl p-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <h4 className="font-semibold text-sm text-gray-900">Observação</h4>
+                                              <button onClick={() => setObservacaoPopover(null)} className="text-gray-400 hover:text-gray-600">
+                                                ✕
+                                              </button>
+                                            </div>
+                                            <p className="text-sm text-gray-700">
+                                              {patient.observacao || 'Sem observações'}
+                                            </p>
+                                          </div>
+                                        )}
+                                      </td>
+                                      <td className="px-4 py-3 text-center relative">
+                                        <button
+                                          onClick={() => setLogPopover(logPopover === patient._id ? null : patient._id)}
+                                          className="text-purple-600 hover:text-purple-800 p-1 hover:bg-purple-50 rounded transition-colors"
+                                          title="Ver log"
+                                        >
+                                          <FileText className="w-5 h-5" />
+                                        </button>
+                                        {logPopover === patient._id && (
+                                          <div className="absolute z-50 right-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-xl p-4 max-h-96 overflow-y-auto">
+                                            <div className="flex items-center justify-between mb-3">
+                                              <h4 className="font-semibold text-sm text-gray-900">Histórico de Alterações</h4>
+                                              <button onClick={() => setLogPopover(null)} className="text-gray-400 hover:text-gray-600">
+                                                ✕
+                                              </button>
+                                            </div>
+                                            <div className="space-y-2">
+                                              {patient.log && patient.log.length > 0 ? (
+                                                patient.log.map((entry: any, idx: number) => (
+                                                  <div key={idx} className="text-xs border-l-2 border-purple-300 pl-3 py-1">
+                                                    <p className="font-medium text-gray-900">{entry.action || 'Ação'}</p>
+                                                    <p className="text-gray-600">{entry.timestamp ? new Date(entry.timestamp).toLocaleString('pt-BR') : 'Data não disponível'}</p>
+                                                    {entry.details && <p className="text-gray-500 mt-1">{entry.details}</p>}
+                                                  </div>
+                                                ))
+                                              ) : (
+                                                <p className="text-sm text-gray-500">Sem histórico de alterações</p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 flex items-center gap-1">
-                          <Building2 className="w-4 h-4 text-gray-400" />
-                          {patient.convenio || '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 flex items-center gap-1">
-                          <Phone className="w-4 h-4 text-gray-400" />
-                          {patient.celular || '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          patient.resposta === 'COMPARECEU'
-                            ? 'bg-green-100 text-green-800'
-                            : patient.resposta === 'NÃO COMPARECEU'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {patient.resposta || 'LIMBO'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => router.push('/patients')}
-                            className="text-blue-600 hover:text-blue-900"
-                            title="Visualizar"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(patient._id)}
-                            className="text-red-600 hover:text-red-900"
-                            title="Deletar"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         ) : (
           /* Cards View */

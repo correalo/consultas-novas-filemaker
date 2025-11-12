@@ -33,6 +33,10 @@ export default function PatientsPage() {
       const data = await patientService.getAll();
       setAllPatients(data);
       setPatients(data);
+      // Definir o índice para o último paciente (último índice do array)
+      if (data.length > 0) {
+        setCurrentIndex(data.length - 1);
+      }
     } catch (err: any) {
       setError('Erro ao carregar pacientes. Tente novamente.');
       console.error(err);
