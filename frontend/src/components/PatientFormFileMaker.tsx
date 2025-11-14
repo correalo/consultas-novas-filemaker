@@ -365,6 +365,7 @@ export default function PatientFormFileMaker({
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [quickSearchQuery, setQuickSearchQuery] = useState('');
   const [showRecallPopover, setShowRecallPopover] = useState(false);
   const recallPopoverRef = useRef<HTMLDivElement>(null);
   const [todos, setTodos] = useState<ToDo[]>([]);
@@ -453,12 +454,41 @@ export default function PatientFormFileMaker({
     }
   };
 
+  const handleQuickSearch = () => {
+    if (!quickSearchQuery.trim()) {
+      setFilteredPatients([]);
+      if (onFilteredPatientsChange) {
+        onFilteredPatientsChange([]);
+      }
+      return;
+    }
+
+    const query = quickSearchQuery.toLowerCase().trim();
+    const filtered = allPatients.filter(p => {
+      return (
+        p.nome?.toLowerCase().includes(query) ||
+        p.celular?.includes(query) ||
+        p.telFixo?.includes(query) ||
+        p.convenio?.toLowerCase().includes(query)
+      );
+    });
+
+    setFilteredPatients(filtered);
+    if (onFilteredPatientsChange) {
+      onFilteredPatientsChange(filtered);
+    }
+    if (filtered.length > 0 && onSelectPatient) {
+      onSelectPatient(filtered[0]);
+    }
+  };
+
   const handleUpdateAndClearFilters = () => {
     // Limpar filtros
     setFilteredPatients([]);
     setSearchTerms({});
     setIsSearching(false);
     setShowSuggestions({});
+    setQuickSearchQuery('');
     
     // Notificar componente pai para limpar filtros
     if (onFilteredPatientsChange) {
@@ -713,8 +743,8 @@ export default function PatientFormFileMaker({
     <div className="bg-[#e8e8e8] min-h-screen overflow-visible !transform-none">
       {/* Header Bar - FileMaker Style - Responsivo */}
       <div className="bg-gradient-to-b from-[#d0d0d0] to-[#b8b8b8] border-b border-gray-400 px-2 sm:px-4 py-2">
-        {/* Mobile/Tablet: Stack vertical */}
-        <div className="flex flex-col gap-2 lg:hidden">
+        {/* Layout vertical para todas as telas */}
+        <div className="flex flex-col gap-2">
           {/* Linha 1: Navegação, slider e contador */}
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
@@ -768,11 +798,37 @@ export default function PatientFormFileMaker({
             </div>
           </div>
           
-          {/* Linha 2: Total de registros (mobile) */}
+          {/* Linha 2: Total de registros */}
           <div className="text-center">
             <span className="text-xs sm:text-sm font-medium text-gray-700">
               Total ({totalPatients} Registros)
             </span>
+          </div>
+          
+          {/* Linha 2.5: Barra de Busca Rápida */}
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={quickSearchQuery}
+                onChange={(e) => setQuickSearchQuery(e.target.value)}
+                placeholder="Buscar por nome, telefone ou convênio..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleQuickSearch();
+                  }
+                }}
+              />
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+            </div>
+            <button
+              onClick={handleQuickSearch}
+              className="px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs sm:text-sm font-medium flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Buscar</span>
+            </button>
           </div>
           
           {/* Linha 3: Botões de ação */}
@@ -865,140 +921,6 @@ export default function PatientFormFileMaker({
                   <X className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">CANCELAR</span>
                   <span className="sm:hidden">CANC</span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Desktop: Layout horizontal original */}
-        <div className="hidden lg:flex items-center justify-between">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="flex gap-1">
-              <button
-                onClick={onPrevious}
-                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
-              >
-                ◀
-              </button>
-              <button
-                onClick={onNext}
-                className="px-3 py-1 bg-white border border-gray-400 rounded shadow-sm hover:bg-gray-200 text-sm"
-              >
-                ▶
-              </button>
-            </div>
-            
-            {/* Slider de navegação */}
-            <div className="flex items-center gap-3 flex-1 max-w-md">
-              <span className="text-xs font-medium text-gray-700 min-w-[20px]">
-                {currentIndex + 1}
-              </span>
-              <div className="flex-1">
-                <Slider
-                  min={0}
-                  max={totalPatients - 1}
-                  value={currentIndex}
-                  onChange={(value) => {
-                    const index = typeof value === 'number' ? value : value[0];
-                    const diff = index - currentIndex;
-                    if (diff > 0) {
-                      for (let i = 0; i < diff; i++) onNext?.();
-                    } else if (diff < 0) {
-                      for (let i = 0; i < Math.abs(diff); i++) onPrevious?.();
-                    }
-                  }}
-                  trackStyle={{ backgroundColor: '#3b82f6', height: 8 }}
-                  railStyle={{ backgroundColor: '#d1d5db', height: 8 }}
-                  handleStyle={{
-                    borderColor: '#3b82f6',
-                    backgroundColor: '#ffffff',
-                    width: 18,
-                    height: 18,
-                    marginTop: -5,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }}
-                />
-              </div>
-              <span className="text-xs font-medium text-gray-700">
-                {totalPatients}
-              </span>
-            </div>
-            
-            <span className="text-sm font-medium text-gray-700">
-              Total ({totalPatients} Registros)
-            </span>
-          </div>
-          
-          <div className="flex gap-2">
-            {!isEditing ? (
-              <>
-                <button
-                  onClick={handleUpdateAndClearFilters}
-                  className="px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-sm font-medium flex items-center gap-1"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  ATUALIZAR
-                </button>
-                <button
-                  onClick={handleEdit}
-                  className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium"
-                >
-                  EDITAR
-                </button>
-                <button
-                  onClick={handleSearch}
-                  className={`px-4 py-1.5 rounded shadow-sm text-sm font-medium flex items-center gap-1 ${
-                    isSearching 
-                      ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                >
-                  <Search className="w-4 h-4" />
-                  {isSearching ? 'SAIR DA BUSCA' : 'BUSCAR'}
-                </button>
-                {isSearching && (
-                  <button
-                    onClick={handlePerformSearch}
-                    className="px-4 py-1.5 bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 text-sm font-medium flex items-center gap-1"
-                  >
-                    <Search className="w-4 h-4" />
-                    REALIZAR BUSCA
-                  </button>
-                )}
-                <button
-                  onClick={onCreateNew}
-                  className="px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-sm font-medium flex items-center gap-1"
-                >
-                  <Plus className="w-4 h-4" />
-                  NOVO
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-sm font-medium disabled:opacity-50 flex items-center gap-1"
-                >
-                  <Save className="w-4 h-4" />
-                  SALVAR
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={isSaving}
-                  className="px-4 py-1.5 bg-orange-600 text-white rounded shadow-sm hover:bg-orange-700 text-sm font-medium disabled:opacity-50 flex items-center gap-1"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  DELETAR
-                </button>
-                <button
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                  className="px-4 py-1.5 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 text-sm font-medium disabled:opacity-50 flex items-center gap-1"
-                >
-                  <X className="w-4 h-4" />
-                  CANCELAR
                 </button>
               </>
             )}
