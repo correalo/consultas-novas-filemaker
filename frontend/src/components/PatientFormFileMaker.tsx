@@ -667,7 +667,7 @@ export default function PatientFormFileMaker({
     setEditedPatient(prev => ({ ...prev, [field]: value }));
   };
 
-  const currentPatient = isEditing ? editedPatient : patient;
+  const currentPatient = isEditing ? editedPatient : (patient || editedPatient);
 
   // Sincronizar editedPatient quando patient mudar
   useEffect(() => {
@@ -675,11 +675,6 @@ export default function PatientFormFileMaker({
       setEditedPatient(patient);
     }
   }, [patient]);
-
-  // Se não houver paciente, não renderizar nada
-  if (!patient) {
-    return null;
-  }
 
   // Calcular idade automaticamente quando a data de nascimento mudar
   useEffect(() => {
