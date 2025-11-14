@@ -370,7 +370,7 @@ export default function PatientFormFileMaker({
   const recallPopoverRef = useRef<HTMLDivElement>(null);
   const [todos, setTodos] = useState<ToDo[]>([]);
   const [newTodo, setNewTodo] = useState<Partial<ToDo>>({
-    nome: patient.nome || '',
+    nome: patient?.nome || '',
     data: '',
     acao: '',
     finalidade: '',
@@ -671,8 +671,15 @@ export default function PatientFormFileMaker({
 
   // Sincronizar editedPatient quando patient mudar
   useEffect(() => {
-    setEditedPatient(patient);
+    if (patient) {
+      setEditedPatient(patient);
+    }
   }, [patient]);
+
+  // Se não houver paciente, não renderizar nada
+  if (!patient) {
+    return null;
+  }
 
   // Calcular idade automaticamente quando a data de nascimento mudar
   useEffect(() => {
