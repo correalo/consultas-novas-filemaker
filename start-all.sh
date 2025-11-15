@@ -100,7 +100,7 @@ npm run start:dev > /tmp/backend.log 2>&1 &
 BACKEND_PID=$!
 
 # Aguardar backend iniciar
-sleep 5
+sleep 8
 
 if port_in_use 3001; then
     echo -e "${GREEN}✓ Backend iniciado com sucesso (PID: $BACKEND_PID)${NC}"
