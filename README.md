@@ -42,12 +42,33 @@ consultas-novas-filemaker/
 
 ## 🔧 Configuração
 
+### ⚡ Início Rápido (Recomendado)
+
+Use os scripts automatizados para iniciar todos os serviços de uma vez:
+
+```bash
+# Primeira vez - Configurar projeto
+./COMANDOS.sh
+
+# Iniciar todos os serviços (MongoDB, Backend e Frontend)
+./start-all.sh
+
+# Parar todos os serviços
+./stop-all.sh
+```
+
+📚 **Documentação completa:** [SCRIPTS.md](SCRIPTS.md)
+
+---
+
 ### Pré-requisitos
 - Node.js 18+
 - MongoDB 6+
 - npm ou yarn
 
-### Backend
+### Configuração Manual
+
+#### Backend
 
 1. Navegue até a pasta backend:
 ```bash
