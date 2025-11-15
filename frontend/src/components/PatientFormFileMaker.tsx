@@ -477,9 +477,6 @@ export default function PatientFormFileMaker({
     if (onFilteredPatientsChange) {
       onFilteredPatientsChange(filtered);
     }
-    if (filtered.length > 0 && onSelectPatient) {
-      onSelectPatient(filtered[0]);
-    }
   };
 
   const handleUpdateAndClearFilters = () => {
@@ -1805,7 +1802,7 @@ export default function PatientFormFileMaker({
               </div>
 
               {/* Ligações Checkboxes */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2" ref={recallPopoverRef}>
                 <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700">
                   LIGAÇÕES
                 </label>
@@ -1881,15 +1878,14 @@ export default function PatientFormFileMaker({
                     <span className="text-sm">5X</span>
                   </label>
                   
-                  {/* Botão RECALL com Popover */}
-                  <div className="relative" ref={recallPopoverRef}>
-                    <button
-                      type="button"
-                      onClick={() => setShowRecallPopover(!showRecallPopover)}
-                      className="ml-2 sm:ml-4 px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
-                    >
-                      RECALL
-                    </button>
+                  {/* Botão RECALL - Desktop */}
+                  <button
+                    type="button"
+                    onClick={() => setShowRecallPopover(!showRecallPopover)}
+                    className="hidden sm:inline-flex ml-4 px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
+                  >
+                    RECALL
+                  </button>
                     
                     {showRecallPopover && (
                       <div className="fixed sm:absolute left-2 right-2 sm:left-0 sm:right-auto top-20 sm:top-full mt-2 w-auto sm:w-80 md:w-96 bg-white border border-gray-300 rounded-lg shadow-xl z-50 max-h-[70vh] sm:max-h-96 overflow-y-auto">
@@ -2300,13 +2296,23 @@ export default function PatientFormFileMaker({
                         </div>
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
 
+              {/* Botão RECALL - Mobile (centralizado) */}
+              <div className="flex justify-center sm:hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowRecallPopover(!showRecallPopover)}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
+                >
+                  RECALL
+                </button>
+              </div>
+
               {/* Observação */}
-              <div className="flex items-start">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                <label className="sm:w-40 sm:text-right sm:pr-4 text-xs sm:text-sm font-medium text-gray-700 sm:pt-2">
                   OBSERVAÇÃO
                 </label>
                 <div className="flex-1">
@@ -2335,37 +2341,6 @@ export default function PatientFormFileMaker({
                 </div>
               </div>
 
-              {/* Alerta */}
-              <div className="flex items-start">
-                <label className="w-40 text-right pr-4 text-sm font-medium text-gray-700 pt-2 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 text-red-600" />
-                  ALERTA
-                </label>
-                <div className="flex-1">
-                  {isSearching ? (
-                    <input
-                      type="text"
-                      value={searchTerms.alerta || ''}
-                      onChange={(e) => handleSearchChange('alerta', e.target.value)}
-                      placeholder="Buscar por alerta..."
-                      aria-label="Buscar alerta"
-                      className="w-full px-3 py-1.5 border border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 bg-yellow-50"
-                    />
-                  ) : isEditing ? (
-                    <textarea
-                      value={currentPatient.alerta || ''}
-                      onChange={(e) => handleChange('alerta', e.target.value)}
-                      rows={2}
-                      aria-label="Alerta"
-                      className="w-full px-3 py-1.5 border border-red-400 rounded focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-50"
-                    />
-                  ) : (
-                    <div className="px-3 py-1.5 bg-red-50 border border-red-300 rounded min-h-[60px] whitespace-pre-wrap text-red-700">
-                      {currentPatient.alerta}
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
 
