@@ -201,11 +201,13 @@ export default function PatientsPage() {
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === patients.length - 1 ? 0 : prev + 1));
+    const currentList = filteredPatients.length > 0 ? filteredPatients : patients;
+    setCurrentIndex((prev) => (prev === currentList.length - 1 ? 0 : prev + 1));
   };
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? patients.length - 1 : prev - 1));
+    const currentList = filteredPatients.length > 0 ? filteredPatients : patients;
+    setCurrentIndex((prev) => (prev === 0 ? currentList.length - 1 : prev - 1));
   };
 
   return (
