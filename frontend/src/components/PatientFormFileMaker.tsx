@@ -1350,8 +1350,8 @@ export default function PatientFormFileMaker({
                       className="border-gray-400 focus:ring-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded">
-                      {currentPatient.subtipoConvenio}
+                    <div className="px-3 py-1.5 bg-white border border-gray-300 rounded min-h-[38px]">
+                      {currentPatient.subtipoConvenio || '\u00A0'}
                     </div>
                   )}
                   </div>
