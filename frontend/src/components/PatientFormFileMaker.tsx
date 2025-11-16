@@ -841,7 +841,8 @@ export default function PatientFormFileMaker({
                     className="flex-1 min-w-[80px] px-2 sm:px-4 py-1.5 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
                   >
                     <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>ATUALIZAR</span>
+                    <span className="hidden sm:inline">MOSTRAR TODOS</span>
+                    <span className="sm:hidden">TODOS</span>
                   </button>
                   <button
                     onClick={handleEdit}
@@ -860,7 +861,7 @@ export default function PatientFormFileMaker({
                     }`}
                   >
                     <Search className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">{isSearching ? 'SAIR' : 'BUSCAR'}</span>
+                    <span className="hidden sm:inline">{isSearching ? 'SAIR' : 'MODO BUSCA'}</span>
                   </button>
                   <button
                     onClick={onCreateNew}
@@ -882,7 +883,7 @@ export default function PatientFormFileMaker({
                     }`}
                   >
                     <Search className="w-3 h-3" />
-                    <span>LOCALIZAR</span>
+                    <span>{isSearching ? 'SAIR' : 'M. BUSCA'}</span>
                   </button>
                   <button
                     onClick={onCreateNew}
