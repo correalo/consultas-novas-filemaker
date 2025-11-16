@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Patient } from '@/types';
 import { patientService } from '@/services/patientService';
-import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus, Calendar } from 'lucide-react';
+import { Save, X, Phone, Mail, MessageSquare, FileText, AlertCircle, Search, RefreshCw, Trash2, Plus, Calendar, ChevronDown } from 'lucide-react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import CustomSelect from './CustomSelect';
+import RetornosRow from './RetornosRow';
 
 // Opções para os selects
 const CONVENIO_OPTIONS = [
@@ -368,6 +369,7 @@ export default function PatientFormFileMaker({
   const [quickSearchQuery, setQuickSearchQuery] = useState('');
   const [showRecallPopover, setShowRecallPopover] = useState(false);
   const recallPopoverRef = useRef<HTMLDivElement>(null);
+  const [isRetornosOpen, setIsRetornosOpen] = useState(false);
   const [todos, setTodos] = useState<ToDo[]>([]);
   const [newTodo, setNewTodo] = useState<Partial<ToDo>>({
     nome: patient?.nome || '',
@@ -895,34 +897,32 @@ export default function PatientFormFileMaker({
                 </div>
               </>
             ) : (
-              <>
+              <div className="flex flex-col sm:flex-row gap-2 w-full">
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-1 px-2 sm:px-4 py-1.5 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                  className="w-full sm:flex-1 px-4 py-2 bg-green-600 text-white rounded shadow-sm hover:bg-green-700 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Save className="w-4 h-4" />
                   SALVAR
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={isSaving}
-                  className="flex-1 px-2 sm:px-4 py-1.5 bg-orange-600 text-white rounded shadow-sm hover:bg-orange-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                  className="w-full sm:flex-1 px-4 py-2 bg-orange-600 text-white rounded shadow-sm hover:bg-orange-700 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">DELETAR</span>
-                  <span className="sm:hidden">DEL</span>
+                  <Trash2 className="w-4 h-4" />
+                  DELETAR
                 </button>
                 <button
                   onClick={handleCancel}
                   disabled={isSaving}
-                  className="flex-1 px-2 sm:px-4 py-1.5 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 text-xs sm:text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                  className="w-full sm:flex-1 px-4 py-2 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">CANCELAR</span>
-                  <span className="sm:hidden">CANC</span>
+                  <X className="w-4 h-4" />
+                  CANCELAR
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -2343,6 +2343,41 @@ export default function PatientFormFileMaker({
               </div>
 
             </div>
+          </div>
+
+          {/* Accordion: Retornos de Pacientes Operados */}
+          <div className="mt-6 bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setIsRetornosOpen(!isRetornosOpen)}
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-sm">
+                  RETORNOS
+                </div>
+                <h3 className="font-bold text-gray-800 text-sm sm:text-base">Retornos de Pacientes Operados</h3>
+              </div>
+              <ChevronDown 
+                className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
+                  isRetornosOpen ? 'transform rotate-180' : ''
+                }`}
+              />
+            </button>
+            
+            {isRetornosOpen && (
+              <div className="p-4 bg-gray-50 border-t-2 border-gray-300">
+                <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-0">
+                  <RetornosRow periodo="7 DIAS" periodoAbrev="7 D" index={0} />
+                  <RetornosRow periodo="30 DIAS" periodoAbrev="30 D" index={1} />
+                  <RetornosRow periodo="3 MESES" periodoAbrev="3 M" index={2} />
+                  <RetornosRow periodo="6 MESES" periodoAbrev="6 M" index={3} />
+                  <RetornosRow periodo="9 MESES" periodoAbrev="9 M" index={4} />
+                  <RetornosRow periodo="12 MESES" periodoAbrev="12 M" index={5} />
+                  <RetornosRow periodo="15 MESES" periodoAbrev="15 M" index={6} />
+                  <RetornosRow periodo="18 MESES" periodoAbrev="18 M" index={7} />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Portal ToDo's - Seção inferior */}
